@@ -6,7 +6,7 @@ To clone and compile the project:
 
 ```
 $ git clone https://github.com/julianmendez/wikihypergraph.git
-$ cd born
+$ cd wikihypergraph
 $ mvn clean install
 ```
 
