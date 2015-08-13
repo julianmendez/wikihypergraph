@@ -26,6 +26,8 @@
 
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
+
+		<mainClass>${project.groupId}.main.Main</mainClass>
 	</properties>
 
 	<build>
@@ -74,10 +76,29 @@
 				<configuration>
 					<archive>
 						<manifest>
+							<addClasspath>true</addClasspath>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+							<mainClass>${mainClass}</mainClass>
 						</manifest>
 					</archive>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<configuration>
+					<executable>java</executable>
+					<mainClass>${mainClass}</mainClass>
+					<arguments>
+						<argument>${configurationFile}</argument>
+						<argument>${expectedResultFile}</argument>
+						<argument>${testId}</argument>
+						<argument>${outputFile}</argument>
+						<argument>${repetitions}</argument>
+					</arguments>
 				</configuration>
 			</plugin>
 
