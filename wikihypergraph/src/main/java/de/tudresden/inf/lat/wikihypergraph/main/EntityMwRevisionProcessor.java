@@ -9,7 +9,7 @@ import org.wikidata.wdtk.dumpfiles.MwRevision;
 import org.wikidata.wdtk.dumpfiles.MwRevisionProcessor;
 
 /**
- * This is MediaWiki revision processor that processes all entities.
+ * This is a MediaWiki revision processor that processes all entities.
  * 
  * @author Julian Mendez
  *

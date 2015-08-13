@@ -7,6 +7,8 @@ import java.io.Writer;
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 
 /**
+ * This is the main class to process the dump files.
+ * 
  * @author Julian Mendez
  */
 public class Main {
@@ -24,6 +26,7 @@ public class Main {
 	 * @param controller
 	 *            dump processing controller
 	 * @param output
+	 *            output
 	 */
 	public void processDump(DumpProcessingController controller, Writer output) {
 		EntityMwRevisionProcessor mwRevisionProcessor = new EntityMwRevisionProcessor(
