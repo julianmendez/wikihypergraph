@@ -1,0 +1,127 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<!-- @author Julian Mendez -->
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>de.tudresden.inf.lat.wikihypergraph</groupId>
+	<artifactId>wikihypergraph</artifactId>
+	<version>0.0.1</version>
+	<packaging>jar</packaging>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+	</properties>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<execution>
+						<id>sources-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<executions>
+					<execution>
+						<id>javadoc-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<name>WikiHyperGraph</name>
+
+	<description>Tool to explore hypergraph properties on Wikidata.</description>
+
+	<url>https://github.com/julianmendez/wikihypergraph</url>
+
+	<inceptionYear>2015</inceptionYear>
+
+	<licenses>
+
+		<license>
+			<name>GNU General Public License, Version 3</name>
+			<url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+		</license>
+
+	</licenses>
+
+	<organization>
+		<name>Chair of Automata Theory - TU Dresden</name>
+		<url>http://lat.inf.tu-dresden.de</url>
+	</organization>
+
+	<developers>
+
+		<developer>
+			<id>julianmendez</id>
+			<name>Julian Mendez</name>
+			<email>julian.mendez@tu-dresden.de</email>
+		</developer>
+
+	</developers>
+
+	<scm>
+		<url>https://github.com/julianmendez/wikihypergraph.git</url>
+		<connection>scm:git:https://github.com/julianmendez/wikihypergraph.git</connection>
+		<developerConnection>scm:git:https://github.com/julianmendez/wikihypergraph.git</developerConnection>
+	</scm>
+
+</project>
+
+
