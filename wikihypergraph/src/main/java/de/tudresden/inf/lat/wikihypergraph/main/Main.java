@@ -45,7 +45,7 @@ public class Main {
 		controller.registerMwRevisionProcessor(mwRevisionProcessor, null, true);
 
 		// this processes the most recent dump file
-		controller.processAllRecentRevisionDumps();
+		controller.processMostRecentJsonDump();
 	}
 
 	public void run() throws IOException {
