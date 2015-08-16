@@ -1,5 +1,8 @@
 # [WikiHyperGraph](http://julianmendez.github.io/wikihypergraph/)
 
+[![Build Status](https://travis-ci.org/julianmendez/wikihypergraph.png?branch=master)](https://travis-ci.org/julianmendez/wikihypergraph)
+
+
 ### Source code
 
 To clone and compile the project:
