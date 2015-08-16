@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
+import org.wikidata.wdtk.dumpfiles.WdhgDumpProcessingController;
 
 /**
  * This is the main class to process the dump files.
@@ -14,6 +15,14 @@ import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 public class Main {
 
 	public static final String WIKIDATAWIKI = "wikidatawiki";
+
+	// the bit vector size of pages is only needed when using Wikidata Toolkit
+	// v0.4.0 (or previous versions)
+	public static final long MAX_PAGES = 100000000;
+
+	// the bit vector size of revisions is only needed when using Wikidata
+	// Toolkit v0.4.0 (or previous versions)
+	public static final long MAX_REVISIONS = 1000000000;
 
 	private String outputFileName = "output.txt";
 
@@ -32,16 +41,16 @@ public class Main {
 		EntityMwRevisionProcessor mwRevisionProcessor = new EntityMwRevisionProcessor(
 				output);
 
-		// This registers the processor
+		// this registers the processor
 		controller.registerMwRevisionProcessor(mwRevisionProcessor, null, true);
 
-		// This processes the most recent dump
+		// this processes the most recent dump file
 		controller.processAllRecentRevisionDumps();
 	}
 
 	public void run() throws IOException {
-		DumpProcessingController controller = new DumpProcessingController(
-				WIKIDATAWIKI);
+		DumpProcessingController controller = new WdhgDumpProcessingController(
+				WIKIDATAWIKI, MAX_PAGES, MAX_REVISIONS);
 		FileWriter writer = new FileWriter(this.outputFileName);
 
 		processDump(controller, writer);
