@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
+import org.wikidata.wdtk.dumpfiles.MwRevisionProcessor;
 import org.wikidata.wdtk.dumpfiles.WdhgDumpProcessingController;
 
 /**
@@ -24,6 +25,7 @@ public class Main {
 	// Toolkit v0.4.0 (or previous versions)
 	public static final long MAX_REVISIONS = 1000000000;
 
+	// this is the default output file name
 	private String outputFileName = "output.txt";
 
 	public Main() {
@@ -35,19 +37,34 @@ public class Main {
 	 * @param controller
 	 *            dump processing controller
 	 * @param output
-	 *            output
+	 *            writer that gets the result of the processing
 	 */
 	public void processDump(DumpProcessingController controller, Writer output) {
-		EntityMwRevisionProcessor mwRevisionProcessor = new EntityMwRevisionProcessor(
+		MwRevisionProcessor mwRevisionProcessor = new EntityMwRevisionProcessor(
 				output);
 
 		// this registers the processor
 		controller.registerMwRevisionProcessor(mwRevisionProcessor, null, true);
 
-		// this processes the most recent dump file
-		controller.processMostRecentJsonDump();
+		try {
+
+			// this processes the most recent dump file in JSON format
+			controller.processMostRecentJsonDump();
+
+		} catch (NullPointerException e) {
+
+			// this catch block is for debugging purposes, if a
+			// NullPointerException is thrown, the exception is shown but the
+			// process is not interrupted
+			e.printStackTrace();
+		}
 	}
 
+	/**
+	 * Runs this dump processor.
+	 *
+	 * @throws IOException
+	 */
 	public void run() throws IOException {
 		DumpProcessingController controller = new WdhgDumpProcessingController(
 				WIKIDATAWIKI, MAX_PAGES, MAX_REVISIONS);
@@ -59,6 +76,14 @@ public class Main {
 		writer.close();
 	}
 
+	/**
+	 * Runs this dump processor. Parameters are ignored.
+	 *
+	 * @param args
+	 *            arguments
+	 * @throws IOException
+	 *             if something went wrong with the input/output streams.
+	 */
 	public static void main(String[] args) throws IOException {
 		Main instance = new Main();
 		instance.run();
