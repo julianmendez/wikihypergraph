@@ -64,6 +64,7 @@ public class Main {
 	 * Runs this dump processor.
 	 *
 	 * @throws IOException
+	 *             if something went wrong with the input/output streams.
 	 */
 	public void run() throws IOException {
 		DumpProcessingController controller = new WdhgDumpProcessingController(
