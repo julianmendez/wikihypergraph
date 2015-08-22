@@ -39,8 +39,8 @@ public class Main {
 
 		try {
 
-			// this processes the most recent dump file in JSON format
-			controller.processMostRecentJsonDump();
+			// this processes the most recent dump file
+			controller.processMostRecentMainDump();
 
 		} catch (NullPointerException e) {
 
