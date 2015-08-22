@@ -37,18 +37,9 @@ public class Main {
 		// this registers the processor
 		controller.registerMwRevisionProcessor(mwRevisionProcessor, null, true);
 
-		try {
+		// this processes the most recent dump file
+		controller.processMostRecentMainDump();
 
-			// this processes the most recent dump file
-			controller.processMostRecentMainDump();
-
-		} catch (NullPointerException e) {
-
-			// this catch block is for debugging purposes, if a
-			// NullPointerException is thrown, the exception is shown but the
-			// process is not interrupted
-			e.printStackTrace();
-		}
 	}
 
 	/**
