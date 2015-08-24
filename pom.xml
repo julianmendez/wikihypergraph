@@ -6,7 +6,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>de.tudresden.inf.lat.wikihypergraph</groupId>
+	<groupId>de.tu-dresden.inf.lat.wikihypergraph</groupId>
 	<artifactId>wikihypergraph-parent</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
