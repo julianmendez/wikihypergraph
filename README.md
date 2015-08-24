@@ -6,7 +6,6 @@
 ### Source code
 
 To clone and compile the project:
-
 ```
 $ git clone https://github.com/julianmendez/wikihypergraph.git
 $ cd wikihypergraph
@@ -16,6 +15,13 @@ $ mvn clean install
 To run the project (after compiling it):
 ```
 $ mvn exec:java
+```
+
+At the moment, this project requires the Wikidata Toolkit 0.5.0-SNAPSHOT. To install it:
+```
+$ git clone https://github.com/Wikidata/Wikidata-Toolkit.git
+$ cd Wikidata-Toolkit
+$ mvn clean install
 ```
 
 ### License
