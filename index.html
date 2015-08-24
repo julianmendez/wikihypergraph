@@ -23,6 +23,8 @@
 <a id="wikihypergraph" class="anchor" href="#wikihypergraph" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="http://julianmendez.github.io/wikihypergraph/">WikiHyperGraph</a>
 </h1>
 
+<p><a href="https://travis-ci.org/julianmendez/wikihypergraph"><img src="https://travis-ci.org/julianmendez/wikihypergraph.png?branch=master" alt="Build Status"></a></p>
+
 <h3>
 <a id="source-code" class="anchor" href="#source-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>Source code</h3>
 
@@ -36,6 +38,13 @@ $ mvn clean install
 <p>To run the project (after compiling it):</p>
 
 <pre><code>$ mvn exec:java
+</code></pre>
+
+<p>At the moment, this project requires the <a href="https://github.com/Wikidata/Wikidata-Toolkit">Wikidata Toolkit</a> 0.5.0-SNAPSHOT. To install it:</p>
+
+<pre><code>$ git clone https://github.com/Wikidata/Wikidata-Toolkit.git
+$ cd Wikidata-Toolkit
+$ mvn clean install
 </code></pre>
 
 <h3>
