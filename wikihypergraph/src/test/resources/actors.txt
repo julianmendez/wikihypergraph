@@ -1,0 +1,20 @@
+Q4573           Sean Connery
+Q36970          Jackie Chan
+Q37876          Natalie Portman
+Q39666          Penélope Cruz
+Q40096          Will Smith
+Q41548          Antonio Banderas
+Q43874          Eddie Murphy
+Q47059          Aishwarya Rai Bachchan
+Q57118          Diane Kruger
+Q58592          Daniel Brühl
+Q81328          Harrison Ford
+Q83338          Robin Williams
+Q175535         Matt Damon
+Q189490         Jennifer Lawrence
+Q204904         Anita Briem
+Q215523         Emilie de Ravin
+Q231648         Gabrielle Union
+Q232499         Rinko Kikuchi
+Q234618         Paz Vega
+Q463860         Ricardo Darín
