@@ -3,8 +3,11 @@ package de.tudresden.inf.lat.wikihypergraph.main;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.wikidata.wdtk.dumpfiles.MwRevision;
 import org.wikidata.wdtk.dumpfiles.MwRevisionProcessor;
@@ -20,6 +23,7 @@ import org.wikidata.wdtk.dumpfiles.MwRevisionProcessor;
 public class EntityMwRevisionProcessor implements MwRevisionProcessor {
 
 	private BufferedWriter output;
+	private final Set<String> items = new TreeSet<String>();
 
 	/**
 	 * Constructs a new MediaWiki revision processor.
@@ -27,8 +31,9 @@ public class EntityMwRevisionProcessor implements MwRevisionProcessor {
 	 * @param writer
 	 *            writer where the result of the processing is written
 	 */
-	public EntityMwRevisionProcessor(Writer writer) {
+	public EntityMwRevisionProcessor(Collection<String> items, Writer writer) {
 		this.output = new BufferedWriter(writer);
+		this.items.addAll(items);
 	}
 
 	@Override
@@ -45,13 +50,29 @@ public class EntityMwRevisionProcessor implements MwRevisionProcessor {
 		}
 	}
 
+	/**
+	 * This method processes an already verified revision, i.e. a revision that
+	 * is contained in the list of items to be processed.
+	 * 
+	 * @param mwRevision
+	 *            revision
+	 * @throws IOException
+	 *             if something went wrong with the input/output
+	 */
+	void processVerifiedRevision(MwRevision mwRevision) throws IOException {
+		this.output.write("" + (new Date()).toString() + ": pageId="
+				+ mwRevision.getPageId() + " : " + mwRevision.getTitle());
+		this.output.newLine();
+		this.output.flush();
+	}
+
 	@Override
 	public void processRevision(MwRevision mwRevision) {
 		try {
-			this.output.write("" + (new Date()).toString() + ": pageId="
-					+ mwRevision.getPageId() + " : " + mwRevision.getTitle());
-			this.output.newLine();
-			this.output.flush();
+			String title = mwRevision.getTitle();
+			if (this.items.contains(title)) {
+				processVerifiedRevision(mwRevision);
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

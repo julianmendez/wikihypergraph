@@ -1,8 +1,14 @@
 package de.tudresden.inf.lat.wikihypergraph.main;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 import org.wikidata.wdtk.dumpfiles.MwRevisionProcessor;
@@ -16,10 +22,42 @@ public class Main {
 
 	public static final String WIKIDATAWIKI = "wikidatawiki";
 
-	// this is the default output file name
-	private String outputFileName = "output.txt";
+	public static final String HELP = "Parameters: <input file> <output file>" //
+			+ "\n" //
+			+ "\nwhere" //
+			+ "\n <input file>  : file name of list of items" //
+			+ "\n <output file> : file name of output file" //
+			+ "\n" //
+			+ "\n";
 
-	public Main() {
+	// this is the default list of items to process
+	private Reader input = null;
+
+	// this is the default output file name
+	private Writer output = null;
+
+	Main() {
+	}
+
+	public Main(Reader input, Writer output) {
+		this.input = input;
+		this.output = output;
+	}
+
+	public Reader getInput() {
+		return input;
+	}
+
+	public void setInput(Reader input) {
+		this.input = input;
+	}
+
+	public Writer getOutput() {
+		return output;
+	}
+
+	public void setOutput(Writer output) {
+		this.output = output;
 	}
 
 	/**
@@ -30,9 +68,10 @@ public class Main {
 	 * @param output
 	 *            writer that gets the result of the processing
 	 */
-	public void processDump(DumpProcessingController controller, Writer output) {
+	public void processDump(DumpProcessingController controller,
+			List<String> listOfItems, Writer output) {
 		MwRevisionProcessor mwRevisionProcessor = new EntityMwRevisionProcessor(
-				output);
+				listOfItems, output);
 
 		// this registers the processor
 		controller.registerMwRevisionProcessor(mwRevisionProcessor, null, true);
@@ -42,34 +81,67 @@ public class Main {
 
 	}
 
+	List<String> readListOfItems(Reader reader0) throws IOException {
+		BufferedReader reader = new BufferedReader(reader0);
+		List<String> ret = new ArrayList<String>();
+		for (String line = reader.readLine(); line != null; line = reader
+				.readLine()) {
+			String item = (new StringTokenizer(line)).nextToken();
+			ret.add(item);
+		}
+		return ret;
+	}
+
 	/**
 	 * Runs this dump processor.
 	 *
 	 * @throws IOException
-	 *             if something went wrong with the input/output streams.
+	 *             if something went wrong with the input/output
 	 */
 	public void run() throws IOException {
 		DumpProcessingController controller = new DumpProcessingController(
 				WIKIDATAWIKI);
-		FileWriter writer = new FileWriter(this.outputFileName);
 
-		processDump(controller, writer);
+		List<String> listOfItems = readListOfItems(this.input);
 
-		writer.flush();
-		writer.close();
+		processDump(controller, listOfItems, this.output);
+
+		this.output.flush();
 	}
 
 	/**
-	 * Runs this dump processor. Parameters are ignored.
+	 * Runs this dump processor using the given arguments.
+	 * 
+	 * @param args
+	 *            arguments (1) input file and (2) output file
+	 * @throws IOException
+	 *             if something went wrong with the input/output
+	 */
+
+	public void run(String args[]) throws IOException {
+		if (args.length == 2) {
+			this.input = new FileReader(args[0]);
+			this.output = new FileWriter(args[1]);
+			run();
+			this.input.close();
+			this.output.flush();
+			this.output.close();
+		} else {
+			System.out.println(HELP);
+		}
+	}
+
+	/**
+	 * Runs this dump processor.
 	 *
 	 * @param args
 	 *            arguments
 	 * @throws IOException
-	 *             if something went wrong with the input/output streams.
+	 *             if something went wrong with the input/output
 	 */
 	public static void main(String[] args) throws IOException {
 		Main instance = new Main();
-		instance.run();
+		instance.run(args);
 	}
 
 }
