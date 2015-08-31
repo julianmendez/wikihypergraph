@@ -34,6 +34,9 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 
 		<mainClass>de.tudresden.inf.lat.wikihypergraph.main.Main</mainClass>
+
+		<inputFile>src/test/resources/actors.txt</inputFile>
+		<outputFile>output.txt</outputFile>
 	</properties>
 
 	<build>
@@ -100,11 +103,8 @@
 						<executable>java</executable>
 						<mainClass>${mainClass}</mainClass>
 						<arguments>
-							<argument>${configurationFile}</argument>
-							<argument>${expectedResultFile}</argument>
-							<argument>${testId}</argument>
+							<argument>${inputFile}</argument>
 							<argument>${outputFile}</argument>
-							<argument>${repetitions}</argument>
 						</arguments>
 					</configuration>
 				</plugin>
