@@ -17,12 +17,6 @@ To run the project (after compiling it):
 $ mvn exec:java
 ```
 
-At the moment, this project requires the [Wikidata Toolkit](https://github.com/Wikidata/Wikidata-Toolkit) 0.5.0-SNAPSHOT. To install it:
-```
-$ git clone https://github.com/Wikidata/Wikidata-Toolkit.git
-$ cd Wikidata-Toolkit
-$ mvn clean install
-```
 
 ### License
 
