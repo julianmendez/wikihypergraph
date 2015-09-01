@@ -9,11 +9,6 @@ language: java
 jdk:
   - oraclejdk7
   - openjdk7
-#  - oraclejdk8
+  - oraclejdk8
 
-
-before_install:
-  - git clone https://github.com/Wikidata/Wikidata-Toolkit.git
-  - cd Wikidata-Toolkit
-  - mvn clean install
 
