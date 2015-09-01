@@ -86,6 +86,8 @@ public class Main {
 			// if all items have been already processed, ...
 			try {
 				output.write(e.getMessage());
+				output.write("\n");
+				output.flush();
 			} catch (IOException ex) {
 				throw new RuntimeException(ex);
 			}
