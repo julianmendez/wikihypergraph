@@ -76,8 +76,23 @@ public class Main {
 		// this registers the processor
 		controller.registerMwRevisionProcessor(mwRevisionProcessor, null, true);
 
-		// this processes the most recent dump file
-		controller.processMostRecentMainDump();
+		try {
+
+			// this processes the most recent dump file
+			controller.processMostRecentMainDump();
+
+		} catch (AllItemsProcessedException e) {
+
+			// if all items have been already processed, ...
+			try {
+				output.write(e.getMessage());
+			} catch (IOException ex) {
+				throw new RuntimeException(ex);
+			}
+
+			// ... finish the revision processing
+			mwRevisionProcessor.finishRevisionProcessing();
+		}
 
 	}
 

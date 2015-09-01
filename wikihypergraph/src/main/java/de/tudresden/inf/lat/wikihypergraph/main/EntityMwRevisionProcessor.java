@@ -24,6 +24,7 @@ public class EntityMwRevisionProcessor implements MwRevisionProcessor {
 
 	private BufferedWriter output;
 	private final Set<String> items = new TreeSet<String>();
+	private final Set<String> processedItems = new TreeSet<String>();
 
 	/**
 	 * Constructs a new MediaWiki revision processor.
@@ -71,7 +72,12 @@ public class EntityMwRevisionProcessor implements MwRevisionProcessor {
 		try {
 			String title = mwRevision.getTitle();
 			if (this.items.contains(title)) {
+				this.processedItems.add(title);
 				processVerifiedRevision(mwRevision);
+				if (this.processedItems.equals(this.items)) {
+					throw new AllItemsProcessedException(
+							"All items have been processed.");
+				}
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
