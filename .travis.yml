@@ -12,3 +12,7 @@ jdk:
   - oraclejdk8
 
 
+after_success:
+  - cd wikihypergraph ; mvn clean cobertura:cobertura coveralls:report
+
+
