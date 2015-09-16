@@ -65,6 +65,8 @@ public class Main {
 	 * 
 	 * @param controller
 	 *            dump processing controller
+	 * @param listOfItems
+	 *            list of items
 	 * @param output
 	 *            writer that gets the result of the processing
 	 */

@@ -29,6 +29,8 @@ public class EntityMwRevisionProcessor implements MwRevisionProcessor {
 	/**
 	 * Constructs a new MediaWiki revision processor.
 	 *
+	 * @param items
+	 *            items
 	 * @param writer
 	 *            writer where the result of the processing is written
 	 */
