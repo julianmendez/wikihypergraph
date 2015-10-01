@@ -13,6 +13,8 @@ import java.util.StringTokenizer;
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 import org.wikidata.wdtk.dumpfiles.MwRevisionProcessor;
 
+import de.tudresden.inf.lat.wikihypergraph.module.ModuleExtractionMwRevisionProcessor;
+
 /**
  * This is the main class to process the dump files.
  * 
@@ -70,10 +72,12 @@ public class Main {
 	 * @param output
 	 *            writer that gets the result of the processing
 	 */
-	public void processDump(DumpProcessingController controller,
-			List<String> listOfItems, Writer output) {
-		MwRevisionProcessor mwRevisionProcessor = new EntityMwRevisionProcessor(
-				listOfItems, output);
+	public void processDump(DumpProcessingController controller, List<String> listOfItems, Writer output) {
+
+		// MwRevisionProcessor mwRevisionProcessor = new
+		// EntityMwRevisionProcessor(listOfItems, output);
+
+		MwRevisionProcessor mwRevisionProcessor = new ModuleExtractionMwRevisionProcessor(listOfItems, output);
 
 		// this registers the processor
 		controller.registerMwRevisionProcessor(mwRevisionProcessor, null, true);
@@ -103,8 +107,7 @@ public class Main {
 	List<String> readListOfItems(Reader reader0) throws IOException {
 		BufferedReader reader = new BufferedReader(reader0);
 		List<String> ret = new ArrayList<String>();
-		for (String line = reader.readLine(); line != null; line = reader
-				.readLine()) {
+		for (String line = reader.readLine(); line != null; line = reader.readLine()) {
 			String item = (new StringTokenizer(line)).nextToken();
 			ret.add(item);
 		}
@@ -118,8 +121,7 @@ public class Main {
 	 *             if something went wrong with the input/output
 	 */
 	public void run() throws IOException {
-		DumpProcessingController controller = new DumpProcessingController(
-				WIKIDATAWIKI);
+		DumpProcessingController controller = new DumpProcessingController(WIKIDATAWIKI);
 
 		List<String> listOfItems = readListOfItems(this.input);
 

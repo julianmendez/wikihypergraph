@@ -35,7 +35,7 @@
 
 		<mainClass>de.tudresden.inf.lat.wikihypergraph.main.Main</mainClass>
 
-		<inputFile>src/test/resources/actors.txt</inputFile>
+		<inputFile>src/test/resources/items.txt</inputFile>
 		<outputFile>output.txt</outputFile>
 	</properties>
 
