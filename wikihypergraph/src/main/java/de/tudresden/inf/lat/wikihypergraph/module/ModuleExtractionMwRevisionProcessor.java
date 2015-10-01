@@ -242,11 +242,11 @@ public class ModuleExtractionMwRevisionProcessor implements MwRevisionProcessor 
 	public void processRevision(MwRevision mwRevision) {
 		try {
 			String title = mwRevision.getTitle();
-			// if (this.toVisit.contains(title)) {
-			this.output.write(title);
-			this.output.newLine();
-			visit(mwRevision);
-			// }
+			if (this.toVisit.contains(title)) {
+				this.output.write(title);
+				this.output.newLine();
+				visit(mwRevision);
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
