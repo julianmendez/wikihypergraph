@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,19 +23,17 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakVisitor;
 import org.wikidata.wdtk.datamodel.interfaces.SomeValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 import org.wikidata.wdtk.datamodel.json.jackson.JacksonDatatypeId;
-import org.wikidata.wdtk.datamodel.json.jackson.JacksonStatement;
-import org.wikidata.wdtk.datamodel.json.jackson.StatementGroupFromJson;
+import org.wikidata.wdtk.datamodel.json.jackson.JacksonTermedStatementDocument;
 import org.wikidata.wdtk.dumpfiles.MwRevision;
 import org.wikidata.wdtk.dumpfiles.MwRevisionProcessor;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -49,7 +46,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ModuleExtractionMwRevisionProcessor implements MwRevisionProcessor {
 
 	public static final String EXPECTED_FORMAT = "application/json";
-	public static final String STATEMENT_KEY_STR = "claims";
 
 	private final Set<String> module = new TreeSet<String>();
 	private final Set<String> visited = new TreeSet<String>();
@@ -177,7 +173,7 @@ public class ModuleExtractionMwRevisionProcessor implements MwRevisionProcessor 
 
 	Set<String> collectEntities(MwRevision mwRevision) throws JsonProcessingException, IOException {
 		Set<String> ret = new TreeSet<String>();
-		StatementGroupFromJson statements = getStatementGroup(mwRevision);
+		List<Statement> statements = getStatementGroup(mwRevision);
 		for (Statement statement : statements) {
 			ret.addAll(collectEntities(statement));
 		}
@@ -265,61 +261,26 @@ public class ModuleExtractionMwRevisionProcessor implements MwRevisionProcessor 
 		}
 	}
 
-	StatementGroupFromJson getStatementGroup(MwRevision mwRevision) throws JsonProcessingException, IOException {
-		List<JacksonStatement> statements = new ArrayList<JacksonStatement>();
+	List<Statement> getStatementGroup(MwRevision mwRevision) throws JsonProcessingException, IOException {
+		List<Statement> statements = new ArrayList<Statement>();
 		String model = mwRevision.getModel();
 		String format = mwRevision.getFormat();
 
 		if (format.equals(EXPECTED_FORMAT)
 				&& (model.equals(JacksonDatatypeId.JSON_DT_ITEM) || model.equals(JacksonDatatypeId.JSON_DT_PROPERTY))) {
-			String text = mwRevision.getText();
-			JsonNode mainNode = getMainNode(text);
-			statements = getStatements(mainNode);
-		}
-		return new StatementGroupFromJson(statements);
-	}
 
-	List<JacksonStatement> getStatements(JsonNode mainNode) throws IOException {
-		List<JacksonStatement> ret = new ArrayList<JacksonStatement>();
-		List<JsonNode> propertyNodes = getPropertyNodes(mainNode);
-		for (JsonNode propertyNode : propertyNodes) {
-			List<JsonNode> statementNodes = getStatementNodes(propertyNode);
-			for (JsonNode statementNode : statementNodes) {
-				JacksonStatement statement = getStatement(statementNode);
-				ret.add(statement);
+			String text = mwRevision.getText();
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode mainNode = mapper.readTree(text);
+			JacksonTermedStatementDocument document = mapper.readValue(mainNode.toString(),
+					JacksonTermedStatementDocument.class);
+
+			List<StatementGroup> list = document.getStatementGroups();
+			for (StatementGroup group : list) {
+				statements.addAll(group.getStatements());
 			}
 		}
-		return ret;
-	}
-
-	JsonNode getMainNode(String jsonTree) throws JsonProcessingException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		return mapper.readTree(jsonTree);
-	}
-
-	List<JsonNode> getPropertyNodes(JsonNode mainNode) {
-		List<JsonNode> ret = new ArrayList<JsonNode>();
-		JsonNode nodeOfStatements = mainNode.get(STATEMENT_KEY_STR);
-		Iterator<String> properties = nodeOfStatements.fieldNames();
-		while (properties.hasNext()) {
-			String property = properties.next();
-			ret.add(nodeOfStatements.get(property));
-		}
-		return ret;
-	}
-
-	List<JsonNode> getStatementNodes(JsonNode propertyNode) throws IOException {
-		List<JsonNode> ret = new ArrayList<JsonNode>();
-		for (int i = 0; i < propertyNode.size(); i++) {
-			ret.add(propertyNode.get(i));
-		}
-		return ret;
-	}
-
-	JacksonStatement getStatement(JsonNode statementNode) throws JsonParseException, JsonMappingException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		JacksonStatement ret = mapper.readValue(statementNode.toString(), JacksonStatement.class);
-		return ret;
+		return statements;
 	}
 
 }
