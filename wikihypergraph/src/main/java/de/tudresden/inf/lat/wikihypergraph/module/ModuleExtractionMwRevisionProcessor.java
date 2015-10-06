@@ -173,7 +173,16 @@ public class ModuleExtractionMwRevisionProcessor implements MwRevisionProcessor 
 
 	Set<String> collectEntities(MwRevision mwRevision) throws JsonProcessingException, IOException {
 		Set<String> ret = new TreeSet<String>();
-		List<Statement> statements = getStatementGroup(mwRevision);
+		List<StatementGroup> statementGroups = getStatementGroups(mwRevision);
+		for (StatementGroup statementGroup : statementGroups) {
+			ret.addAll(collectEntities(statementGroup));
+		}
+		return ret;
+	}
+
+	Set<String> collectEntities(StatementGroup statementGroup) {
+		Set<String> ret = new TreeSet<String>();
+		List<Statement> statements = statementGroup.getStatements();
 		for (Statement statement : statements) {
 			ret.addAll(collectEntities(statement));
 		}
@@ -184,14 +193,12 @@ public class ModuleExtractionMwRevisionProcessor implements MwRevisionProcessor 
 		Set<String> ret = new TreeSet<String>();
 		Claim claim = statement.getClaim();
 
-		// this is not necessary
 		if (claim.getSubject() != null) {
 			ret.add(claim.getSubject().getId());
 		}
 
 		Snak snak = claim.getMainSnak();
 
-		// properties are also included
 		ret.add(snak.getPropertyId().getId());
 
 		EntitySnakVisitor entityVisitor = new EntitySnakVisitor();
@@ -240,6 +247,8 @@ public class ModuleExtractionMwRevisionProcessor implements MwRevisionProcessor 
 		try {
 			if (this.toVisit.contains(title)) {
 				this.output.write(title);
+				Set<String> entities = collectEntities(mwRevision);
+				this.output.write("\t" + entities.toString());
 				this.output.newLine();
 				this.output.flush();
 				visit(mwRevision);
@@ -262,10 +271,10 @@ public class ModuleExtractionMwRevisionProcessor implements MwRevisionProcessor 
 		}
 	}
 
-	List<Statement> getStatementGroup(MwRevision mwRevision) throws JsonProcessingException, IOException {
-		List<Statement> statements = new ArrayList<Statement>();
-		String model = mwRevision.getModel();
+	List<StatementGroup> getStatementGroups(MwRevision mwRevision) throws JsonProcessingException, IOException {
+		List<StatementGroup> ret = new ArrayList<StatementGroup>();
 		String format = mwRevision.getFormat();
+		String model = mwRevision.getModel();
 
 		if (format.equals(EXPECTED_FORMAT)
 				&& (model.equals(JacksonDatatypeId.JSON_DT_ITEM) || model.equals(JacksonDatatypeId.JSON_DT_PROPERTY))) {
@@ -274,13 +283,10 @@ public class ModuleExtractionMwRevisionProcessor implements MwRevisionProcessor 
 			String text = mwRevision.getText();
 			JacksonTermedStatementDocument document = mapper.readValue(text, JacksonTermedStatementDocument.class);
 			document.setSiteIri(Datamodel.SITE_WIKIDATA);
+			ret.addAll(document.getStatementGroups());
 
-			List<StatementGroup> list = document.getStatementGroups();
-			for (StatementGroup group : list) {
-				statements.addAll(group.getStatements());
-			}
 		}
-		return statements;
+		return ret;
 	}
 
 }
