@@ -31,6 +31,9 @@ public class DependencyMwRevisionProcessor implements MwRevisionProcessor {
 
 	/**
 	 * Constructs a new processor.
+	 * 
+	 * @param writer
+	 *            writer
 	 */
 	public DependencyMwRevisionProcessor(Writer writer) {
 		this.output = new BufferedWriter(writer);

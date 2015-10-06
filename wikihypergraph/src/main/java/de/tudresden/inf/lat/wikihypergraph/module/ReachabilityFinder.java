@@ -19,7 +19,7 @@ public class ReachabilityFinder {
 	/**
 	 * Constructs a new module extractor.
 	 * 
-	 * @param dependencyMap
+	 * @param adjacencyMap
 	 *            map of dependencies
 	 */
 	public ReachabilityFinder(Map<String, Set<String>> adjacencyMap) {
