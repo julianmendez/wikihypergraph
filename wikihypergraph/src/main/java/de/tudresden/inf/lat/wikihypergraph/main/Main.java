@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -77,11 +76,7 @@ public class Main {
 	 */
 	public void processDump(DumpProcessingController controller, List<String> listOfItems, Writer output) {
 
-		// MwRevisionProcessor mwRevisionProcessor = new
-		// EntityMwRevisionProcessor(listOfItems, output);
-
-		DependencyMwRevisionProcessor mwRevisionProcessor = new DependencyMwRevisionProcessor(
-				new OutputStreamWriter(System.out)); // TODO remove this output
+		DependencyMwRevisionProcessor mwRevisionProcessor = new DependencyMwRevisionProcessor();
 
 		// this registers the processor
 		controller.registerMwRevisionProcessor(mwRevisionProcessor, null, true);
@@ -99,9 +94,10 @@ public class Main {
 				Map<String, String> reachableVertices = finder.getReachabilityMap(item);
 				Set<String> keySet = reachableVertices.keySet();
 				for (String key : keySet) {
+					String value = reachableVertices.get(key);
 					output.write(key);
 					output.write("\t");
-					output.write(reachableVertices.get(key));
+					output.write(value);
 					output.write("\n");
 					output.flush();
 				}

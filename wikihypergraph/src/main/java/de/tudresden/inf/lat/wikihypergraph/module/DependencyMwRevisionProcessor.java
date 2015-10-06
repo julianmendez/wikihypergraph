@@ -20,7 +20,14 @@ import org.wikidata.wdtk.dumpfiles.MwRevisionProcessor;
 public class DependencyMwRevisionProcessor implements MwRevisionProcessor {
 
 	private final Map<String, Set<String>> dependencyMap = new TreeMap<String, Set<String>>();
-	private BufferedWriter output;
+	private final BufferedWriter output;
+
+	/**
+	 * Constructs a new processor.
+	 */
+	public DependencyMwRevisionProcessor() {
+		this.output = null;
+	}
 
 	/**
 	 * Constructs a new processor.
@@ -41,12 +48,15 @@ public class DependencyMwRevisionProcessor implements MwRevisionProcessor {
 	@Override
 	public void startRevisionProcessing(String siteName, String baseUrl, Map<Integer, String> namespaces) {
 		try {
-			this.output.write("" + (new Date()).toString() + ": start revision processing with site name=" + siteName
-					+ ", baseUrl=" + baseUrl + " namespaces=" + namespaces);
-			this.output.newLine();
-			this.output.flush();
-
 			this.dependencyMap.clear();
+
+			if (this.output != null) {
+				this.output.write("" + (new Date()).toString() + ": start revision processing with site name="
+						+ siteName + ", baseUrl=" + baseUrl + " namespaces=" + namespaces);
+				this.output.newLine();
+				this.output.flush();
+			}
+
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -59,23 +69,33 @@ public class DependencyMwRevisionProcessor implements MwRevisionProcessor {
 			Set<String> entities = (new EntityCollector()).collectEntities(mwRevision);
 			this.dependencyMap.put(title, entities);
 
-			this.output.write(title);
-			this.output.write("\t");
-			this.output.write(entities.toString());
-			this.output.newLine();
-			this.output.flush();
+			if (this.output != null) {
+				this.output.write(title);
+				this.output.write("\t");
+				this.output.write(entities.toString());
+				this.output.newLine();
+				this.output.flush();
+			}
 		} catch (IOException e) {
-			System.out.println("Cannot process '" + title + "'.");
+			try {
+				this.output.write("Could not process '" + title + "'.");
+				this.output.newLine();
+				this.output.flush();
+			} catch (IOException ex) {
+				throw new RuntimeException(ex);
+			}
 		}
 	}
 
 	@Override
 	public void finishRevisionProcessing() {
 		try {
-			this.output.write("" + (new Date()).toString() + ": finish revision processing.");
-			this.output.newLine();
-			this.output.newLine();
-			this.output.flush();
+			if (this.output != null) {
+				this.output.write("" + (new Date()).toString() + ": finish revision processing.");
+				this.output.newLine();
+				this.output.newLine();
+				this.output.flush();
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
