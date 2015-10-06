@@ -4,16 +4,19 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
-import org.wikidata.wdtk.dumpfiles.MwRevisionProcessor;
 
-import de.tudresden.inf.lat.wikihypergraph.module.ModuleExtractionMwRevisionProcessor;
+import de.tudresden.inf.lat.wikihypergraph.module.DependencyMwRevisionProcessor;
+import de.tudresden.inf.lat.wikihypergraph.module.ReachabilityFinder;
 
 /**
  * This is the main class to process the dump files.
@@ -77,7 +80,8 @@ public class Main {
 		// MwRevisionProcessor mwRevisionProcessor = new
 		// EntityMwRevisionProcessor(listOfItems, output);
 
-		MwRevisionProcessor mwRevisionProcessor = new ModuleExtractionMwRevisionProcessor(listOfItems, output);
+		DependencyMwRevisionProcessor mwRevisionProcessor = new DependencyMwRevisionProcessor(
+				new OutputStreamWriter(System.out)); // TODO remove this output
 
 		// this registers the processor
 		controller.registerMwRevisionProcessor(mwRevisionProcessor, null, true);
@@ -86,6 +90,25 @@ public class Main {
 
 			// this processes the most recent dump file
 			controller.processMostRecentMainDump();
+
+			Map<String, Set<String>> dependencyMap = mwRevisionProcessor.getDependencyMap();
+
+			ReachabilityFinder finder = new ReachabilityFinder(dependencyMap);
+
+			for (String item : listOfItems) {
+				Map<String, String> reachableVertices = finder.getReachabilityMap(item);
+				Set<String> keySet = reachableVertices.keySet();
+				for (String key : keySet) {
+					output.write(key);
+					output.write("\t");
+					output.write(reachableVertices.get(key));
+					output.write("\n");
+					output.flush();
+				}
+			}
+
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 
 		} catch (AllItemsProcessedException e) {
 
