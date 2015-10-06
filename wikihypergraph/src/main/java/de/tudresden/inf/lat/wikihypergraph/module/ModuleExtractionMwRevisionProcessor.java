@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -34,7 +35,6 @@ import org.wikidata.wdtk.dumpfiles.MwRevision;
 import org.wikidata.wdtk.dumpfiles.MwRevisionProcessor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -236,15 +236,16 @@ public class ModuleExtractionMwRevisionProcessor implements MwRevisionProcessor 
 
 	@Override
 	public void processRevision(MwRevision mwRevision) {
+		String title = mwRevision.getTitle();
 		try {
-			String title = mwRevision.getTitle();
 			if (this.toVisit.contains(title)) {
 				this.output.write(title);
 				this.output.newLine();
+				this.output.flush();
 				visit(mwRevision);
 			}
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			System.out.println("Cannot process '" + title + "'.");
 		}
 	}
 
@@ -269,11 +270,10 @@ public class ModuleExtractionMwRevisionProcessor implements MwRevisionProcessor 
 		if (format.equals(EXPECTED_FORMAT)
 				&& (model.equals(JacksonDatatypeId.JSON_DT_ITEM) || model.equals(JacksonDatatypeId.JSON_DT_PROPERTY))) {
 
-			String text = mwRevision.getText();
 			ObjectMapper mapper = new ObjectMapper();
-			JsonNode mainNode = mapper.readTree(text);
-			JacksonTermedStatementDocument document = mapper.readValue(mainNode.toString(),
-					JacksonTermedStatementDocument.class);
+			String text = mwRevision.getText();
+			JacksonTermedStatementDocument document = mapper.readValue(text, JacksonTermedStatementDocument.class);
+			document.setSiteIri(Datamodel.SITE_WIKIDATA);
 
 			List<StatementGroup> list = document.getStatementGroups();
 			for (StatementGroup group : list) {
