@@ -77,12 +77,14 @@ public class DependencyMwRevisionProcessor implements MwRevisionProcessor {
 				this.output.flush();
 			}
 		} catch (IOException e) {
-			try {
-				this.output.write("Could not process '" + title + "'.");
-				this.output.newLine();
-				this.output.flush();
-			} catch (IOException ex) {
-				throw new RuntimeException(ex);
+			if (this.output != null) {
+				try {
+					this.output.write("Could not process '" + title + "'.");
+					this.output.newLine();
+					this.output.flush();
+				} catch (IOException ex) {
+					throw new RuntimeException(ex);
+				}
 			}
 		}
 	}
