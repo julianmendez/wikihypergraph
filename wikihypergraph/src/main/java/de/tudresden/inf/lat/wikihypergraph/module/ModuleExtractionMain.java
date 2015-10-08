@@ -1,4 +1,4 @@
-package de.tudresden.inf.lat.wikihypergraph.main;
+package de.tudresden.inf.lat.wikihypergraph.module;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -16,15 +16,12 @@ import java.util.TreeSet;
 
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 
-import de.tudresden.inf.lat.wikihypergraph.module.DependencyMwRevisionProcessor;
-import de.tudresden.inf.lat.wikihypergraph.module.ReachabilityFinder;
-
 /**
  * This is the main class to extract a module.
  * 
  * @author Julian Mendez
  */
-public class Main {
+public class ModuleExtractionMain {
 
 	public static final String WIKIDATAWIKI = "wikidatawiki";
 
@@ -42,10 +39,10 @@ public class Main {
 	// this is the default output file name
 	private Writer output = null;
 
-	Main() {
+	ModuleExtractionMain() {
 	}
 
-	public Main(Reader input, Writer output) {
+	public ModuleExtractionMain(Reader input, Writer output) {
 		this.input = input;
 		this.output = output;
 	}
@@ -192,7 +189,7 @@ public class Main {
 	 *             if something went wrong with the input/output
 	 */
 	public static void main(String[] args) throws IOException {
-		Main instance = new Main();
+		ModuleExtractionMain instance = new ModuleExtractionMain();
 		instance.run(args);
 	}
 
