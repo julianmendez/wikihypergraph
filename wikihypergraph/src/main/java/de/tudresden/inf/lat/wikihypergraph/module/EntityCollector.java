@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
@@ -171,19 +170,10 @@ public class EntityCollector {
 	 */
 	public Set<String> collectEntities(Statement statement) {
 		Set<String> ret = new TreeSet<String>();
-		Claim claim = statement.getClaim();
-
-		if (claim.getSubject() != null) {
-			ret.add(claim.getSubject().getId());
-		}
-
-		Snak snak = claim.getMainSnak();
-
+		Snak snak = statement.getClaim().getMainSnak();
 		ret.add(snak.getPropertyId().getId());
-
 		EntitySnakVisitor entityVisitor = new EntitySnakVisitor();
 		ret.addAll(snak.accept(entityVisitor));
-
 		return ret;
 	}
 
