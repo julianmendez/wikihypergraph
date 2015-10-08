@@ -55,13 +55,14 @@ public class ReachabilityFinder {
 			toVisit.remove(current);
 
 			Set<String> adjacentSet = this.adjacencyMap.get(current);
-			for (String adjacent : adjacentSet) {
-				if (!visited.contains(adjacent)) {
-					toVisit.add(adjacent);
-					ret.put(adjacent, current);
+			if (adjacentSet != null) {
+				for (String adjacent : adjacentSet) {
+					if (!visited.contains(adjacent)) {
+						toVisit.add(adjacent);
+						ret.put(adjacent, current);
+					}
 				}
 			}
-
 		}
 		return ret;
 	}
