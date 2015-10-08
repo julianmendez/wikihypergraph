@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 
@@ -18,7 +20,7 @@ import de.tudresden.inf.lat.wikihypergraph.module.DependencyMwRevisionProcessor;
 import de.tudresden.inf.lat.wikihypergraph.module.ReachabilityFinder;
 
 /**
- * This is the main class to process the dump files.
+ * This is the main class to extract a module.
  * 
  * @author Julian Mendez
  */
@@ -64,6 +66,26 @@ public class Main {
 		this.output = output;
 	}
 
+	void outputList(Set<String> set, Writer writer) throws IOException {
+		for (String key : set) {
+			writer.write(key);
+			writer.write(" ");
+		}
+		writer.flush();
+	}
+
+	void outputJustification(Map<String, String> map, Writer writer) throws IOException {
+		Set<String> keySet = map.keySet();
+		for (String key : keySet) {
+			String value = map.get(key);
+			writer.write(key);
+			writer.write("\t");
+			writer.write(value);
+			writer.write("\n");
+		}
+		writer.flush();
+	}
+
 	/**
 	 * Processes the most recent dump.
 	 * 
@@ -90,35 +112,25 @@ public class Main {
 
 			ReachabilityFinder finder = new ReachabilityFinder(dependencyMap);
 
+			Map<String, String> reachableVertices = new TreeMap<String, String>();
 			for (String item : listOfItems) {
-				Map<String, String> reachableVertices = finder.getReachabilityMap(item);
-				Set<String> keySet = reachableVertices.keySet();
-				for (String key : keySet) {
-					String value = reachableVertices.get(key);
-					output.write(key);
-					output.write("\t");
-					output.write(value);
-					output.write("\n");
-					output.flush();
-				}
+				reachableVertices.putAll(finder.getReachabilityMap(item));
 			}
+
+			Set<String> module = new TreeSet<String>();
+			module.addAll(listOfItems);
+			module.addAll(reachableVertices.keySet());
+
+			output.write("Module:\n");
+			outputList(module, output);
+			output.write("\n\n\n");
+			output.write("Justification:\n");
+			outputJustification(reachableVertices, output);
+			output.write("\n\n\n");
+			output.flush();
 
 		} catch (IOException e) {
 			throw new RuntimeException(e);
-
-		} catch (AllItemsProcessedException e) {
-
-			// if all items have been already processed, ...
-			try {
-				output.write(e.getMessage());
-				output.write("\n");
-				output.flush();
-			} catch (IOException ex) {
-				throw new RuntimeException(ex);
-			}
-
-			// ... finish the revision processing
-			mwRevisionProcessor.finishRevisionProcessing();
 		}
 
 	}
