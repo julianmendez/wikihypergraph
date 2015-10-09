@@ -51,8 +51,6 @@ public class DependencyMwRevisionProcessor implements MwRevisionProcessor {
 	@Override
 	public void startRevisionProcessing(String siteName, String baseUrl, Map<Integer, String> namespaces) {
 		try {
-			this.dependencyMap.clear();
-
 			if (this.output != null) {
 				this.output.write("" + (new Date()).toString() + ": start revision processing with site name="
 						+ siteName + ", baseUrl=" + baseUrl + " namespaces=" + namespaces);

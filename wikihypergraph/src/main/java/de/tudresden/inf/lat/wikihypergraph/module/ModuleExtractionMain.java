@@ -16,6 +16,8 @@ import java.util.TreeSet;
 
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 
+import de.tudresden.inf.lat.wikihypergraph.main.AllItemsProcessedException;
+
 /**
  * This is the main class to extract a module.
  * 
@@ -102,8 +104,13 @@ public class ModuleExtractionMain {
 
 		try {
 
-			// this processes the most recent dump file
-			controller.processMostRecentMainDump();
+			try {
+
+				// this processes the most recent dump file
+				controller.processMostRecentMainDump();
+
+			} catch (AllItemsProcessedException e) {
+			}
 
 			Map<String, Set<String>> dependencyMap = mwRevisionProcessor.getDependencyMap();
 
