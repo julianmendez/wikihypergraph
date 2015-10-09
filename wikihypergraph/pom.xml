@@ -33,9 +33,9 @@
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 
-		<mainClass>de.tudresden.inf.lat.wikihypergraph.main.Main</mainClass>
+		<mainClass>de.tudresden.inf.lat.wikihypergraph.module.ModuleExtractionMain</mainClass>
 
-		<inputFile>src/test/resources/actors.txt</inputFile>
+		<inputFile>src/test/resources/items.txt</inputFile>
 		<outputFile>output.txt</outputFile>
 	</properties>
 
