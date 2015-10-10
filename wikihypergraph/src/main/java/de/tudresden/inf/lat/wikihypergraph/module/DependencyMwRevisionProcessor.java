@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.wikidata.wdtk.dumpfiles.MwRevision;
 import org.wikidata.wdtk.dumpfiles.MwRevisionProcessor;
@@ -19,14 +20,16 @@ import org.wikidata.wdtk.dumpfiles.MwRevisionProcessor;
  */
 public class DependencyMwRevisionProcessor implements MwRevisionProcessor {
 
-	private final Map<String, Set<String>> dependencyMap = new TreeMap<String, Set<String>>();
+	private final Map<Integer, Set<Integer>> dependencyMap = new TreeMap<Integer, Set<Integer>>();
 	private final BufferedWriter output;
+	private final IntegerManager manager;
 
 	/**
 	 * Constructs a new processor.
 	 */
-	public DependencyMwRevisionProcessor() {
+	public DependencyMwRevisionProcessor(IntegerManager manager) {
 		this.output = null;
+		this.manager = manager;
 	}
 
 	/**
@@ -35,8 +38,9 @@ public class DependencyMwRevisionProcessor implements MwRevisionProcessor {
 	 * @param writer
 	 *            writer
 	 */
-	public DependencyMwRevisionProcessor(Writer writer) {
+	public DependencyMwRevisionProcessor(Writer writer, IntegerManager manager) {
 		this.output = new BufferedWriter(writer);
+		this.manager = manager;
 	}
 
 	/**
@@ -44,7 +48,7 @@ public class DependencyMwRevisionProcessor implements MwRevisionProcessor {
 	 * 
 	 * @return the dependency map
 	 */
-	public Map<String, Set<String>> getDependencyMap() {
+	public Map<Integer, Set<Integer>> getDependencyMap() {
 		return this.dependencyMap;
 	}
 
@@ -66,25 +70,30 @@ public class DependencyMwRevisionProcessor implements MwRevisionProcessor {
 	@Override
 	public void processRevision(MwRevision mwRevision) {
 		String title = mwRevision.getTitle();
-		try {
-			Set<String> entities = (new EntityCollector()).collectEntities(mwRevision);
-			this.dependencyMap.put(title, entities);
+		if (this.manager.isValid(title)) {
+			Integer pageIdentifier = this.manager.asNumber(title);
+			try {
+				Set<String> entities = (new EntityCollector()).collectEntities(mwRevision);
+				Set<Integer> entityIdentifiers = new TreeSet<Integer>();
+				entityIdentifiers.addAll(this.manager.asNumber(entities));
+				this.dependencyMap.put(pageIdentifier, entityIdentifiers);
 
-			if (this.output != null) {
-				this.output.write(title);
-				this.output.write("\t");
-				this.output.write(entities.toString());
-				this.output.newLine();
-				this.output.flush();
-			}
-		} catch (IOException e) {
-			if (this.output != null) {
-				try {
-					this.output.write("Could not process '" + title + "'.");
+				if (this.output != null) {
+					this.output.write(title);
+					this.output.write("\t");
+					this.output.write(entities.toString());
 					this.output.newLine();
 					this.output.flush();
-				} catch (IOException ex) {
-					throw new RuntimeException(ex);
+				}
+			} catch (IOException e) {
+				if (this.output != null) {
+					try {
+						this.output.write("Could not process '" + title + "'.");
+						this.output.newLine();
+						this.output.flush();
+					} catch (IOException ex) {
+						throw new RuntimeException(ex);
+					}
 				}
 			}
 		}

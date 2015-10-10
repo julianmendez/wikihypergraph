@@ -65,19 +65,19 @@ public class ModuleExtractionMain {
 		this.output = output;
 	}
 
-	void outputList(Set<String> set, Writer writer) throws IOException {
-		for (String key : set) {
-			writer.write(key);
+	void outputList(Set<Integer> set, Writer writer, IntegerManager manager) throws IOException {
+		for (Integer key : set) {
+			writer.write(manager.asString(key));
 			writer.write(" ");
 		}
 		writer.flush();
 	}
 
-	void outputJustification(Map<String, String> map, Writer writer) throws IOException {
-		Set<String> keySet = map.keySet();
-		for (String key : keySet) {
-			String value = map.get(key);
-			writer.write(key);
+	void outputJustification(Map<Integer, Integer> map, Writer writer, IntegerManager manager) throws IOException {
+		Set<Integer> keySet = map.keySet();
+		for (Integer key : keySet) {
+			String value = manager.asString(map.get(key));
+			writer.write(manager.asString(key));
 			writer.write("\t");
 			writer.write(value);
 			writer.write("\n");
@@ -97,7 +97,8 @@ public class ModuleExtractionMain {
 	 */
 	public void processDump(DumpProcessingController controller, List<String> listOfItems, Writer output) {
 
-		DependencyMwRevisionProcessor mwRevisionProcessor = new DependencyMwRevisionProcessor();
+		IntegerManager manager = new IntegerManager();
+		DependencyMwRevisionProcessor mwRevisionProcessor = new DependencyMwRevisionProcessor(manager);
 
 		// this registers the processor
 		controller.registerMwRevisionProcessor(mwRevisionProcessor, null, true);
@@ -112,24 +113,24 @@ public class ModuleExtractionMain {
 			} catch (AllItemsProcessedException e) {
 			}
 
-			Map<String, Set<String>> dependencyMap = mwRevisionProcessor.getDependencyMap();
+			Map<Integer, Set<Integer>> dependencyMap = mwRevisionProcessor.getDependencyMap();
 
 			ReachabilityFinder finder = new ReachabilityFinder(dependencyMap);
 
-			Map<String, String> reachableVertices = new TreeMap<String, String>();
+			Set<Integer> module = new TreeSet<Integer>();
+			Map<Integer, Integer> reachableVertices = new TreeMap<Integer, Integer>();
 			for (String item : listOfItems) {
-				reachableVertices.putAll(finder.getReachabilityMap(item));
+				Integer itemIdentifier = manager.asNumber(item);
+				reachableVertices.putAll(finder.getReachabilityMap(itemIdentifier));
+				module.add(itemIdentifier);
 			}
-
-			Set<String> module = new TreeSet<String>();
-			module.addAll(listOfItems);
 			module.addAll(reachableVertices.keySet());
 
 			output.write("Module:\n");
-			outputList(module, output);
+			outputList(module, output, manager);
 			output.write("\n\n\n");
 			output.write("Justification:\n");
-			outputJustification(reachableVertices, output);
+			outputJustification(reachableVertices, output, manager);
 			output.write("\n\n\n");
 			output.flush();
 

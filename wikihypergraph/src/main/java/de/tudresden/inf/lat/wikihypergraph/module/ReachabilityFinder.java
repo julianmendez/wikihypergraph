@@ -14,7 +14,7 @@ import java.util.TreeSet;
  */
 public class ReachabilityFinder {
 
-	private Map<String, Set<String>> adjacencyMap = new TreeMap<String, Set<String>>();
+	private Map<Integer, Set<Integer>> adjacencyMap = new TreeMap<Integer, Set<Integer>>();
 
 	/**
 	 * Constructs a new module extractor.
@@ -22,7 +22,7 @@ public class ReachabilityFinder {
 	 * @param adjacencyMap
 	 *            map of dependencies
 	 */
-	public ReachabilityFinder(Map<String, Set<String>> adjacencyMap) {
+	public ReachabilityFinder(Map<Integer, Set<Integer>> adjacencyMap) {
 		this.adjacencyMap = adjacencyMap;
 	}
 
@@ -31,7 +31,7 @@ public class ReachabilityFinder {
 	 * 
 	 * @return the map of dependencies
 	 */
-	public Map<String, Set<String>> getAdjacencyMap() {
+	public Map<Integer, Set<Integer>> getAdjacencyMap() {
 		return this.adjacencyMap;
 	}
 
@@ -44,19 +44,19 @@ public class ReachabilityFinder {
 	 *            starting vertex
 	 * @return a map of vertices reachable from the given vertex
 	 */
-	public Map<String, String> getReachabilityMap(String origin) {
-		Map<String, String> ret = new TreeMap<String, String>();
-		Set<String> visited = new TreeSet<String>();
-		Set<String> toVisit = new TreeSet<String>();
+	public Map<Integer, Integer> getReachabilityMap(Integer origin) {
+		Map<Integer, Integer> ret = new TreeMap<Integer, Integer>();
+		Set<Integer> visited = new TreeSet<Integer>();
+		Set<Integer> toVisit = new TreeSet<Integer>();
 		toVisit.add(origin);
 		while (!toVisit.isEmpty()) {
-			String current = toVisit.iterator().next();
+			Integer current = toVisit.iterator().next();
 			visited.add(current);
 			toVisit.remove(current);
 
-			Set<String> adjacentSet = this.adjacencyMap.get(current);
+			Set<Integer> adjacentSet = this.adjacencyMap.get(current);
 			if (adjacentSet != null) {
-				for (String adjacent : adjacentSet) {
+				for (Integer adjacent : adjacentSet) {
 					if (!visited.contains(adjacent)) {
 						toVisit.add(adjacent);
 						ret.put(adjacent, current);
@@ -75,7 +75,7 @@ public class ReachabilityFinder {
 	 *            starting vertex
 	 * @return a set of vertices reachable from the given vertex
 	 */
-	public Set<String> getReachabilitySet(String origin) {
+	public Set<Integer> getReachabilitySet(Integer origin) {
 		return getReachabilityMap(origin).keySet();
 	}
 
