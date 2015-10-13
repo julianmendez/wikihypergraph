@@ -6,28 +6,28 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * Map of properties and items. Properties are identified with negative number
- * and items with positive numbers.
+ * An object of this class models an array that stores sets of integers at
+ * possibly negative positions.
  * 
  * @author Julian Mendez
  *
  */
-public class PropertyAndItemArray {
+public class PosNegIndexArray {
 
 	private List<Set<Integer>> negative = new ArrayList<Set<Integer>>();
 	private List<Set<Integer>> positive = new ArrayList<Set<Integer>>();
 
 	/**
-	 * Creates a new map.
+	 * Creates a new array.
 	 */
-	public PropertyAndItemArray() {
+	public PosNegIndexArray() {
 	}
 
 	void set(List<Set<Integer>> list, int index, Set<Integer> element) {
 		while (list.size() < index) {
 			list.add(new TreeSet<Integer>());
 		}
-		if (index == list.size() - 1) {
+		if (index == list.size()) {
 			list.add(element);
 		} else {
 			list.set(index, element);
@@ -72,8 +72,8 @@ public class PropertyAndItemArray {
 		if (obj == null) {
 			return false;
 		}
-		if (obj instanceof PropertyAndItemArray) {
-			PropertyAndItemArray other = (PropertyAndItemArray) obj;
+		if (obj instanceof PosNegIndexArray) {
+			PosNegIndexArray other = (PosNegIndexArray) obj;
 			return this.negative.equals(other.negative) && this.positive.equals(other.positive);
 		}
 		return false;

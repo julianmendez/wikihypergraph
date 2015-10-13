@@ -19,7 +19,7 @@ import org.wikidata.wdtk.dumpfiles.MwRevisionProcessor;
  */
 public class DependencyMwRevisionProcessor implements MwRevisionProcessor {
 
-	private final PropertyAndItemArray dependencyMap = new PropertyAndItemArray();
+	private final PosNegIndexArray dependencyMap = new PosNegIndexArray();
 	private final BufferedWriter output;
 	private final IntegerManager manager;
 
@@ -47,7 +47,7 @@ public class DependencyMwRevisionProcessor implements MwRevisionProcessor {
 	 * 
 	 * @return the dependency map
 	 */
-	public PropertyAndItemArray getDependencyMap() {
+	public PosNegIndexArray getDependencyMap() {
 		return this.dependencyMap;
 	}
 
