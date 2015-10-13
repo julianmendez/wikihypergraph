@@ -6,7 +6,6 @@ import java.io.Writer;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.wikidata.wdtk.dumpfiles.MwRevision;
@@ -20,7 +19,7 @@ import org.wikidata.wdtk.dumpfiles.MwRevisionProcessor;
  */
 public class DependencyMwRevisionProcessor implements MwRevisionProcessor {
 
-	private final Map<Integer, Set<Integer>> dependencyMap = new TreeMap<Integer, Set<Integer>>();
+	private final PropertyAndItemArray dependencyMap = new PropertyAndItemArray();
 	private final BufferedWriter output;
 	private final IntegerManager manager;
 
@@ -48,7 +47,7 @@ public class DependencyMwRevisionProcessor implements MwRevisionProcessor {
 	 * 
 	 * @return the dependency map
 	 */
-	public Map<Integer, Set<Integer>> getDependencyMap() {
+	public PropertyAndItemArray getDependencyMap() {
 		return this.dependencyMap;
 	}
 
@@ -76,7 +75,7 @@ public class DependencyMwRevisionProcessor implements MwRevisionProcessor {
 				Set<String> entities = (new EntityCollector()).collectEntities(mwRevision);
 				Set<Integer> entityIdentifiers = new TreeSet<Integer>();
 				entityIdentifiers.addAll(this.manager.asNumber(entities));
-				this.dependencyMap.put(pageIdentifier, entityIdentifiers);
+				this.dependencyMap.set(pageIdentifier, entityIdentifiers);
 
 				if (this.output != null) {
 					this.output.write(title);

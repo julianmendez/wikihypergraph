@@ -113,7 +113,7 @@ public class ModuleExtractionMain {
 			} catch (AllItemsProcessedException e) {
 			}
 
-			Map<Integer, Set<Integer>> dependencyMap = mwRevisionProcessor.getDependencyMap();
+			PropertyAndItemArray dependencyMap = mwRevisionProcessor.getDependencyMap();
 
 			ReachabilityFinder finder = new ReachabilityFinder(dependencyMap);
 
