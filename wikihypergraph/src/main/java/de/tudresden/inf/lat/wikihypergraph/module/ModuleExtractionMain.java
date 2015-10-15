@@ -45,6 +45,14 @@ public class ModuleExtractionMain {
 	ModuleExtractionMain() {
 	}
 
+	/**
+	 * Creates a new module extractor.
+	 * 
+	 * @param input
+	 *            input
+	 * @param output
+	 *            output
+	 */
 	public ModuleExtractionMain(Reader input, Writer output) {
 		this.input = input;
 		this.output = output;
@@ -87,16 +95,12 @@ public class ModuleExtractionMain {
 	}
 
 	/**
-	 * Processes the most recent dump.
+	 * Downloads all dependencies.
 	 * 
-	 * @param controller
-	 *            dump processing controller
-	 * @param listOfItems
-	 *            list of items
 	 * @param output
 	 *            writer that gets the result of the processing
 	 */
-	public void downloadDependencies(Writer output) throws IOException {
+	public void downloadDependencies(Writer output) {
 		DumpProcessingController controller = new DumpProcessingController(WIKIDATAWIKI);
 		DependencyPropertiesMwRevisionProcessor mwRevisionProcessor = new DependencyPropertiesMwRevisionProcessor(
 				output);

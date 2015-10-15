@@ -25,6 +25,9 @@ public class DependencyMwRevisionProcessor implements MwRevisionProcessor {
 
 	/**
 	 * Constructs a new processor.
+	 *
+	 * @param manager
+	 *            integer manager
 	 */
 	public DependencyMwRevisionProcessor(IntegerManager manager) {
 		this.output = null;
@@ -36,6 +39,8 @@ public class DependencyMwRevisionProcessor implements MwRevisionProcessor {
 	 * 
 	 * @param writer
 	 *            writer
+	 * @param manager
+	 *            integer manager
 	 */
 	public DependencyMwRevisionProcessor(Writer writer, IntegerManager manager) {
 		this.output = new BufferedWriter(writer);
