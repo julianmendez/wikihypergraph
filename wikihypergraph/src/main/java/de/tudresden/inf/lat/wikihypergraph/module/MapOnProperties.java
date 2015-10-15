@@ -22,6 +22,7 @@ import java.util.TreeSet;
 public class MapOnProperties implements AdjacencyMap {
 
 	public static final String EQUALS_SIGN = "=";
+	public static final String COMMENT_CHAR = "#";
 
 	private final String fileName;
 
@@ -63,9 +64,11 @@ public class MapOnProperties implements AdjacencyMap {
 		try {
 			BufferedReader input = new BufferedReader(new FileReader(this.fileName));
 			for (String line = input.readLine(); line != null && !found; line = input.readLine()) {
-				if (getKey(line).equals(key)) {
-					found = true;
-					result = getValue(line);
+				if (!line.trim().isEmpty() && !line.startsWith(COMMENT_CHAR)) {
+					if (getKey(line).equals(key)) {
+						found = true;
+						result = getValue(line);
+					}
 				}
 			}
 			input.close();
@@ -99,8 +102,10 @@ public class MapOnProperties implements AdjacencyMap {
 		Set<Integer> ret = new TreeSet<Integer>();
 		String keyStr = manager.asString(key);
 		String valueStr = get(keyStr);
-		List<String> valueListStr = asList(valueStr);
-		ret.addAll(manager.asNumber(valueListStr));
+		if (valueStr != null) {
+			List<String> valueListStr = asList(valueStr);
+			ret.addAll(manager.asNumber(valueListStr));
+		}
 		return ret;
 	}
 
