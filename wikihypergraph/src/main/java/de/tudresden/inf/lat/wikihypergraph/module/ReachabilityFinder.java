@@ -35,6 +35,8 @@ public class ReachabilityFinder {
 	 * 
 	 * @param adjacencyMap
 	 *            map of dependencies
+	 * @param output
+	 *            output
 	 */
 	public ReachabilityFinder(AdjacencyMap adjacencyMap, Writer output) {
 		this.adjacencyMap = adjacencyMap;
