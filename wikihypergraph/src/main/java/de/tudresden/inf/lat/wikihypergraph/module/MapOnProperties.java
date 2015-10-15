@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -21,7 +23,9 @@ public class MapOnProperties implements AdjacencyMap {
 
 	public static final String EQUALS_SIGN = "=";
 
-	private String fileName;
+	private final String fileName;
+
+	private Map<String, String> cache = new HashMap<String, String>();
 
 	/**
 	 * Constructs a new map.
@@ -38,19 +42,22 @@ public class MapOnProperties implements AdjacencyMap {
 	}
 
 	/**
-	 * Creates a new array.
+	 * Returns the file name of the dependency file.
+	 * 
+	 * @return the file name of the dependency file
 	 */
-	public MapOnProperties() {
+	public String getFileName() {
+		return this.fileName;
 	}
 
 	/**
-	 * Returns the value for the given key.
+	 * Returns the value for the given key. This method does not use the cache.
 	 * 
 	 * @param key
 	 *            key
 	 * @return the value for the given key
 	 */
-	public String get(String key) {
+	public String getX(String key) {
 		String result = null;
 		boolean found = false;
 		try {
@@ -66,6 +73,24 @@ public class MapOnProperties implements AdjacencyMap {
 			throw new RuntimeException(e);
 		}
 		return result;
+	}
+
+	/**
+	 * Returns the value for the given key. This method uses the cache.
+	 * 
+	 * @param key
+	 *            key
+	 * @return the value for the given key
+	 */
+	public String get(String key) {
+		String ret = this.cache.get(key);
+		if (ret == null) {
+			ret = getX(key);
+			if (ret != null) {
+				this.cache.put(key, ret);
+			}
+		}
+		return ret;
 	}
 
 	@Override

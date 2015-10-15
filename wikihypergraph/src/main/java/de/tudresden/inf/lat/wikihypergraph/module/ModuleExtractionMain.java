@@ -104,8 +104,8 @@ public class ModuleExtractionMain {
 		controller.processMostRecentMainDump();
 	}
 
-	public void writeModule(Set<Integer> setOfItems, AdjacencyMap dependencyMap, Writer output,
-			IntegerManager manager) throws IOException {
+	public void writeModule(Set<Integer> setOfItems, AdjacencyMap dependencyMap, Writer output, IntegerManager manager)
+			throws IOException {
 		ReachabilityFinder finder = new ReachabilityFinder(dependencyMap);
 		Set<Integer> module = new TreeSet<Integer>();
 		Map<Integer, Integer> reachableVertices = new TreeMap<Integer, Integer>();
@@ -152,8 +152,6 @@ public class ModuleExtractionMain {
 		Set<Integer> setOfItemIdentifiers = new TreeSet<Integer>();
 		setOfItemIdentifiers.addAll(manager.asNumber(setOfItems));
 		writeModule(setOfItemIdentifiers, new MapOnProperties(TEMPORARY_FILE), this.output, manager);
-
-		this.output.flush();
 	}
 
 	/**
