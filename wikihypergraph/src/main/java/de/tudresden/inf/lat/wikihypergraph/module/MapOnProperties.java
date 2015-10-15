@@ -113,7 +113,11 @@ public class MapOnProperties implements AdjacencyMap {
 			String valueStr = get(keyStr);
 			if (valueStr != null) {
 				List<String> valueListStr = asList(valueStr);
-				ret.addAll(manager.asNumber(valueListStr));
+				for (String current : valueListStr) {
+					if (manager.isValid(current)) {
+						ret.add(manager.asNumber(current));
+					}
+				}
 			}
 		}
 		return ret;
