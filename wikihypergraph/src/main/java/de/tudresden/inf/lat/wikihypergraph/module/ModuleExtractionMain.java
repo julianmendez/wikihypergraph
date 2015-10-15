@@ -1,6 +1,7 @@
 package de.tudresden.inf.lat.wikihypergraph.module;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,8 +16,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
-
-import de.tudresden.inf.lat.wikihypergraph.main.AllItemsProcessedException;
 
 /**
  * This is the main class to extract a module.
@@ -97,49 +96,32 @@ public class ModuleExtractionMain {
 	 * @param output
 	 *            writer that gets the result of the processing
 	 */
-	public void processDump(DumpProcessingController controller, List<String> listOfItems, Writer output) {
+	public void downloadDependencies(Writer output) throws IOException {
+		DumpProcessingController controller = new DumpProcessingController(WIKIDATAWIKI);
+		DependencyPropertiesMwRevisionProcessor mwRevisionProcessor = new DependencyPropertiesMwRevisionProcessor(
+				output);
+		controller.registerMwRevisionProcessor(mwRevisionProcessor, null, true);
+		controller.processMostRecentMainDump();
+	}
 
-		try {
-
-			DependencyPropertiesMwRevisionProcessor mwRevisionProcessor = new DependencyPropertiesMwRevisionProcessor(
-					new FileWriter(TEMPORARY_FILE));
-
-			// this registers the processor
-			controller.registerMwRevisionProcessor(mwRevisionProcessor, null, true);
-
-			try {
-
-				// this processes the most recent dump file
-				controller.processMostRecentMainDump();
-
-			} catch (AllItemsProcessedException e) {
-			}
-
-			AdjacencyMap dependencyMap = new MapOnProperties(TEMPORARY_FILE);
-			IntegerManager manager = new IntegerManager();
-			ReachabilityFinder finder = new ReachabilityFinder(dependencyMap);
-
-			Set<Integer> module = new TreeSet<Integer>();
-			Map<Integer, Integer> reachableVertices = new TreeMap<Integer, Integer>();
-			for (String item : listOfItems) {
-				Integer itemIdentifier = manager.asNumber(item);
-				reachableVertices.putAll(finder.getReachabilityMap(itemIdentifier));
-				module.add(itemIdentifier);
-			}
-			module.addAll(reachableVertices.keySet());
-
-			output.write("Module:\n");
-			outputList(module, output, manager);
-			output.write("\n\n\n");
-			output.write("Justification:\n");
-			outputJustification(reachableVertices, output, manager);
-			output.write("\n\n\n");
-			output.flush();
-
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+	public void writeModule(Set<Integer> setOfItems, AdjacencyMap dependencyMap, Writer output,
+			IntegerManager manager) throws IOException {
+		ReachabilityFinder finder = new ReachabilityFinder(dependencyMap);
+		Set<Integer> module = new TreeSet<Integer>();
+		Map<Integer, Integer> reachableVertices = new TreeMap<Integer, Integer>();
+		for (Integer itemIdentifier : setOfItems) {
+			reachableVertices.putAll(finder.getReachabilityMap(itemIdentifier));
+			module.add(itemIdentifier);
 		}
+		module.addAll(reachableVertices.keySet());
 
+		output.write("Module:\n");
+		outputList(module, output, manager);
+		output.write("\n\n\n");
+		output.write("Justification:\n");
+		outputJustification(reachableVertices, output, manager);
+		output.write("\n\n\n");
+		output.flush();
 	}
 
 	List<String> readListOfItems(Reader reader0) throws IOException {
@@ -156,14 +138,20 @@ public class ModuleExtractionMain {
 	 * Runs this dump processor.
 	 *
 	 * @throws IOException
-	 *             if something went wrong with the input/output
+	 *             if something goes wrong with I/O
 	 */
 	public void run() throws IOException {
-		DumpProcessingController controller = new DumpProcessingController(WIKIDATAWIKI);
 
-		List<String> listOfItems = readListOfItems(this.input);
+		File propertiesFile = new File(TEMPORARY_FILE);
+		if (!propertiesFile.exists()) {
+			downloadDependencies(new FileWriter(propertiesFile));
+		}
 
-		processDump(controller, listOfItems, this.output);
+		IntegerManager manager = new IntegerManager();
+		List<String> setOfItems = readListOfItems(this.input);
+		Set<Integer> setOfItemIdentifiers = new TreeSet<Integer>();
+		setOfItemIdentifiers.addAll(manager.asNumber(setOfItems));
+		writeModule(setOfItemIdentifiers, new MapOnProperties(TEMPORARY_FILE), this.output, manager);
 
 		this.output.flush();
 	}
@@ -174,7 +162,7 @@ public class ModuleExtractionMain {
 	 * @param args
 	 *            arguments (1) input file and (2) output file
 	 * @throws IOException
-	 *             if something went wrong with the input/output
+	 *             if something goes wrong with I/O
 	 */
 
 	public void run(String args[]) throws IOException {
@@ -196,7 +184,7 @@ public class ModuleExtractionMain {
 	 * @param args
 	 *            arguments
 	 * @throws IOException
-	 *             if something went wrong with the input/output
+	 *             if something goes wrong with I/O
 	 */
 	public static void main(String[] args) throws IOException {
 		ModuleExtractionMain instance = new ModuleExtractionMain();
