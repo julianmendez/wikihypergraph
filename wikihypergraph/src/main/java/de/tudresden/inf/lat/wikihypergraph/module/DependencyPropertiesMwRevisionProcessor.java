@@ -81,7 +81,7 @@ public class DependencyPropertiesMwRevisionProcessor implements MwRevisionProces
 				this.output.write(" = ");
 				this.output.write(asString(entities));
 				this.output.newLine();
-				this.output.flush();
+				// this.output.flush();
 
 			} catch (IOException ex) {
 				throw new RuntimeException(ex);
