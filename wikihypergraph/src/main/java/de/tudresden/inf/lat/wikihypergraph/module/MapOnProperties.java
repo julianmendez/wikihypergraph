@@ -60,20 +60,23 @@ public class MapOnProperties implements AdjacencyMap {
 	 */
 	public String getX(String key) {
 		String result = null;
-		boolean found = false;
-		try {
-			BufferedReader input = new BufferedReader(new FileReader(this.fileName));
-			for (String line = input.readLine(); line != null && !found; line = input.readLine()) {
-				if (!line.trim().isEmpty() && !line.startsWith(COMMENT_CHAR)) {
-					if (getKey(line).equals(key)) {
-						found = true;
-						result = getValue(line);
+		if (key != null) {
+			String cleanKey = key.trim();
+			boolean found = false;
+			try {
+				BufferedReader input = new BufferedReader(new FileReader(this.fileName));
+				for (String line = input.readLine(); line != null && !found; line = input.readLine()) {
+					if (!line.trim().isEmpty() && !line.startsWith(COMMENT_CHAR)) {
+						if (getKey(line).equals(cleanKey)) {
+							found = true;
+							result = getValue(line);
+						}
 					}
 				}
+				input.close();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
 			}
-			input.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
 		}
 		return result;
 	}
@@ -86,11 +89,15 @@ public class MapOnProperties implements AdjacencyMap {
 	 * @return the value for the given key
 	 */
 	public String get(String key) {
-		String ret = this.cache.get(key);
-		if (ret == null) {
-			ret = getX(key);
-			if (ret != null) {
-				this.cache.put(key, ret);
+		String ret = null;
+		if (key != null) {
+			String cleanKey = key.trim();
+			ret = this.cache.get(cleanKey);
+			if (ret == null) {
+				ret = getX(cleanKey);
+				if (ret != null) {
+					this.cache.put(cleanKey, ret);
+				}
 			}
 		}
 		return ret;
@@ -98,13 +105,16 @@ public class MapOnProperties implements AdjacencyMap {
 
 	@Override
 	public Set<Integer> get(Integer key) {
-		IntegerManager manager = new IntegerManager();
-		Set<Integer> ret = new TreeSet<Integer>();
-		String keyStr = manager.asString(key);
-		String valueStr = get(keyStr);
-		if (valueStr != null) {
-			List<String> valueListStr = asList(valueStr);
-			ret.addAll(manager.asNumber(valueListStr));
+		Set<Integer> ret = null;
+		if (key != null) {
+			ret = new TreeSet<Integer>();
+			IntegerManager manager = new IntegerManager();
+			String keyStr = manager.asString(key);
+			String valueStr = get(keyStr);
+			if (valueStr != null) {
+				List<String> valueListStr = asList(valueStr);
+				ret.addAll(manager.asNumber(valueListStr));
+			}
 		}
 		return ret;
 	}
@@ -113,7 +123,7 @@ public class MapOnProperties implements AdjacencyMap {
 		String ret = null;
 		int index = line.indexOf(EQUALS_SIGN);
 		if (index != -1) {
-			ret = line.substring(0, index);
+			ret = line.substring(0, index).trim();
 		}
 		return ret;
 	}
@@ -122,16 +132,19 @@ public class MapOnProperties implements AdjacencyMap {
 		String ret = null;
 		int index = line.indexOf(EQUALS_SIGN);
 		if (index != -1) {
-			ret = line.substring(index + EQUALS_SIGN.length());
+			ret = line.substring(index + EQUALS_SIGN.length()).trim();
 		}
 		return ret;
 	}
 
 	List<String> asList(String line) {
-		List<String> ret = new ArrayList<String>();
-		StringTokenizer stok = new StringTokenizer(line);
-		while (stok.hasMoreTokens()) {
-			ret.add(stok.nextToken());
+		List<String> ret = null;
+		if (line != null) {
+			ret = new ArrayList<String>();
+			StringTokenizer stok = new StringTokenizer(line);
+			while (stok.hasMoreTokens()) {
+				ret.add(stok.nextToken());
+			}
 		}
 		return ret;
 	}
