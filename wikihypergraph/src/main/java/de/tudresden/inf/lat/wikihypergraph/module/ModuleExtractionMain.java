@@ -119,7 +119,7 @@ public class ModuleExtractionMain {
 		}
 		module.addAll(reachableVertices.keySet());
 
-		output.write("Module:\n");
+		output.write("\n\nModule:\n");
 		outputList(module, output, manager);
 		output.write("\n\n\n");
 		output.write("Justification:\n");
@@ -155,7 +155,8 @@ public class ModuleExtractionMain {
 		List<String> setOfItems = readListOfItems(this.input);
 		Set<Integer> setOfItemIdentifiers = new TreeSet<Integer>();
 		setOfItemIdentifiers.addAll(manager.asNumber(setOfItems));
-		writeModule(setOfItemIdentifiers, new MapOnProperties(TEMPORARY_FILE), this.output, manager);
+		MapOnProperties dependencyMap = new MapOnProperties(new FileReader(propertiesFile));
+		writeModule(setOfItemIdentifiers, dependencyMap, this.output, manager);
 	}
 
 	/**

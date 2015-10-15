@@ -1,8 +1,8 @@
 package de.tudresden.inf.lat.wikihypergraph.module;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +14,8 @@ import java.util.TreeSet;
 
 /**
  * An object of this class models an unmodifiable map that reads its entries
- * from a {@link Properties} file.
+ * from a {@link Properties} file. This does not support values with multiple
+ * lines.
  * 
  * @author Julian Mendez
  *
@@ -24,61 +25,36 @@ public class MapOnProperties implements AdjacencyMap {
 	public static final String EQUALS_SIGN = "=";
 	public static final String COMMENT_CHAR = "#";
 
-	private final String fileName;
-
-	private Map<String, String> cache = new HashMap<String, String>();
+	private Map<String, String> map = new HashMap<String, String>();
 
 	/**
 	 * Constructs a new map.
 	 * 
-	 * @param fileName
+	 * @param reader
 	 *            file name of Properties file
 	 */
-	public MapOnProperties(String fileName) {
-		if (fileName == null) {
+	public MapOnProperties(Reader reader) {
+		if (reader == null) {
 			throw new IllegalArgumentException("Null argument.");
 		}
 
-		this.fileName = fileName;
+		try {
+			loadMap(reader);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	/**
-	 * Returns the file name of the dependency file.
-	 * 
-	 * @return the file name of the dependency file
-	 */
-	public String getFileName() {
-		return this.fileName;
-	}
-
-	/**
-	 * Returns the value for the given key. This method does not use the cache.
-	 * 
-	 * @param key
-	 *            key
-	 * @return the value for the given key
-	 */
-	public String getX(String key) {
-		String result = null;
-		if (key != null) {
-			String cleanKey = key.trim();
-			boolean found = false;
-			try {
-				BufferedReader input = new BufferedReader(new FileReader(this.fileName));
-				for (String line = input.readLine(); line != null && !found; line = input.readLine()) {
-					if (!line.trim().isEmpty() && !line.startsWith(COMMENT_CHAR)) {
-						if (getKey(line).equals(cleanKey)) {
-							found = true;
-							result = getValue(line);
-						}
-					}
-				}
-				input.close();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
+	void loadMap(Reader reader) throws IOException {
+		BufferedReader input = new BufferedReader(reader);
+		for (String line = input.readLine(); line != null; line = input.readLine()) {
+			if (!line.trim().isEmpty() && !line.startsWith(COMMENT_CHAR)) {
+				String key = getKey(line);
+				String value = getValue(line);
+				this.map.put(key, value);
 			}
 		}
-		return result;
+		input.close();
 	}
 
 	/**
@@ -92,13 +68,7 @@ public class MapOnProperties implements AdjacencyMap {
 		String ret = null;
 		if (key != null) {
 			String cleanKey = key.trim();
-			ret = this.cache.get(cleanKey);
-			if (ret == null) {
-				ret = getX(cleanKey);
-				if (ret != null) {
-					this.cache.put(cleanKey, ret);
-				}
-			}
+			ret = this.map.get(cleanKey);
 		}
 		return ret;
 	}
@@ -153,6 +123,10 @@ public class MapOnProperties implements AdjacencyMap {
 		return ret;
 	}
 
+	public Map<String, String> getMap() {
+		return this.map;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -163,19 +137,19 @@ public class MapOnProperties implements AdjacencyMap {
 		}
 		if (obj instanceof MapOnProperties) {
 			MapOnProperties other = (MapOnProperties) obj;
-			return this.fileName.equals(other.fileName);
+			return this.map.equals(other.map);
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return this.fileName.hashCode();
+		return this.map.hashCode();
 	}
 
 	@Override
 	public String toString() {
-		return this.fileName.toString();
+		return this.map.toString();
 	}
 
 }
