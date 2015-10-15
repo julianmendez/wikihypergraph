@@ -27,6 +27,8 @@ public class ModuleExtractionMain {
 
 	public static final String WIKIDATAWIKI = "wikidatawiki";
 
+	public static final String TEMPORARY_FILE = "dependencies.properties";
+
 	public static final String HELP = "Parameters: <input file> <output file>" //
 			+ "\n" //
 			+ "\nwhere" //
@@ -97,13 +99,13 @@ public class ModuleExtractionMain {
 	 */
 	public void processDump(DumpProcessingController controller, List<String> listOfItems, Writer output) {
 
-		IntegerManager manager = new IntegerManager();
-		DependencyMwRevisionProcessor mwRevisionProcessor = new DependencyMwRevisionProcessor(manager);
-
-		// this registers the processor
-		controller.registerMwRevisionProcessor(mwRevisionProcessor, null, true);
-
 		try {
+
+			DependencyPropertiesMwRevisionProcessor mwRevisionProcessor = new DependencyPropertiesMwRevisionProcessor(
+					new FileWriter(TEMPORARY_FILE));
+
+			// this registers the processor
+			controller.registerMwRevisionProcessor(mwRevisionProcessor, null, true);
 
 			try {
 
@@ -113,8 +115,8 @@ public class ModuleExtractionMain {
 			} catch (AllItemsProcessedException e) {
 			}
 
-			PosNegIndexArray dependencyMap = mwRevisionProcessor.getDependencyMap();
-
+			AdjacencyMap dependencyMap = new MapOnProperties(TEMPORARY_FILE);
+			IntegerManager manager = new IntegerManager();
 			ReachabilityFinder finder = new ReachabilityFinder(dependencyMap);
 
 			Set<Integer> module = new TreeSet<Integer>();

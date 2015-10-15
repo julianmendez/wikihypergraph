@@ -12,7 +12,7 @@ import java.util.TreeSet;
  * @author Julian Mendez
  *
  */
-public class PosNegIndexArray {
+public class PosNegIndexArray implements AdjacencyMap {
 
 	private List<Set<Integer>> negative = new ArrayList<Set<Integer>>();
 	private List<Set<Integer>> positive = new ArrayList<Set<Integer>>();
@@ -42,6 +42,7 @@ public class PosNegIndexArray {
 		return this.negative.isEmpty() && this.positive.isEmpty();
 	}
 
+	@Override
 	public Set<Integer> get(Integer index) {
 		if (index < 0) {
 			return this.negative.get((-1) * index);

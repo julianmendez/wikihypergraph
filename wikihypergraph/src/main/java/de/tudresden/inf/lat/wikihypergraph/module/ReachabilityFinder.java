@@ -14,7 +14,7 @@ import java.util.TreeSet;
  */
 public class ReachabilityFinder {
 
-	private final PosNegIndexArray adjacencyMap;
+	private final AdjacencyMap adjacencyMap;
 
 	/**
 	 * Constructs a new module extractor.
@@ -22,7 +22,7 @@ public class ReachabilityFinder {
 	 * @param adjacencyMap
 	 *            map of dependencies
 	 */
-	public ReachabilityFinder(PosNegIndexArray adjacencyMap) {
+	public ReachabilityFinder(AdjacencyMap adjacencyMap) {
 		this.adjacencyMap = adjacencyMap;
 	}
 
@@ -31,7 +31,7 @@ public class ReachabilityFinder {
 	 * 
 	 * @return the map of dependencies
 	 */
-	public PosNegIndexArray getAdjacencyMap() {
+	public AdjacencyMap getAdjacencyMap() {
 		return this.adjacencyMap;
 	}
 
