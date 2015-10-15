@@ -110,7 +110,7 @@ public class ModuleExtractionMain {
 
 	public void writeModule(Set<Integer> setOfItems, AdjacencyMap dependencyMap, Writer output, IntegerManager manager)
 			throws IOException {
-		ReachabilityFinder finder = new ReachabilityFinder(dependencyMap);
+		ReachabilityFinder finder = new ReachabilityFinder(dependencyMap, this.output);
 		Set<Integer> module = new TreeSet<Integer>();
 		Map<Integer, Integer> reachableVertices = new TreeMap<Integer, Integer>();
 		for (Integer itemIdentifier : setOfItems) {
