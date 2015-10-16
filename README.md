@@ -14,9 +14,10 @@ $ mvn clean install
 
 To run the project (after compiling it):
 ```
+$ cd wikihypergraph
 $ mvn exec:java
 ```
-
+(this means, `cd` twice after cloning)
 
 ### License
 
