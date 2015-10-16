@@ -1,7 +1,5 @@
 package de.tudresden.inf.lat.wikihypergraph.module;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -17,7 +15,6 @@ import java.util.TreeSet;
 public class ReachabilityFinder {
 
 	private final AdjacencyMap adjacencyMap;
-	private final Writer output;
 
 	/**
 	 * Constructs a new module extractor.
@@ -27,20 +24,6 @@ public class ReachabilityFinder {
 	 */
 	public ReachabilityFinder(AdjacencyMap adjacencyMap) {
 		this.adjacencyMap = adjacencyMap;
-		this.output = null;
-	}
-
-	/**
-	 * Constructs a new module extractor.
-	 * 
-	 * @param adjacencyMap
-	 *            map of dependencies
-	 * @param output
-	 *            output
-	 */
-	public ReachabilityFinder(AdjacencyMap adjacencyMap, Writer output) {
-		this.adjacencyMap = adjacencyMap;
-		this.output = output;
 	}
 
 	/**
@@ -50,18 +33,6 @@ public class ReachabilityFinder {
 	 */
 	public AdjacencyMap getAdjacencyMap() {
 		return this.adjacencyMap;
-	}
-
-	void log(Integer current) {
-		if (this.output != null) {
-			try {
-				IntegerManager manager = new IntegerManager();
-				this.output.write(" " + manager.asString(current));
-				this.output.flush();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
 	}
 
 	/**
@@ -82,7 +53,6 @@ public class ReachabilityFinder {
 			Integer current = toVisit.iterator().next();
 			visited.add(current);
 			toVisit.remove(current);
-			log(current);
 
 			Set<Integer> adjacentSet = this.adjacencyMap.get(current);
 			if (adjacentSet != null) {
