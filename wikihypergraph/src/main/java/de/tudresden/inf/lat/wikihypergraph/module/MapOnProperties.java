@@ -24,6 +24,7 @@ public class MapOnProperties implements AdjacencyMap {
 
 	public static final String EQUALS_SIGN = "=";
 	public static final String COMMENT_CHAR = "#";
+	public static final String PARSING_PROBLEM_MESSAGE = DependencyPropertiesMwRevisionProcessor.PARSING_PROBLEM_MESSAGE;
 
 	private Map<String, String> map = new HashMap<String, String>();
 
@@ -45,13 +46,19 @@ public class MapOnProperties implements AdjacencyMap {
 		}
 	}
 
+	boolean isValidValue(String value) {
+		return value != null && !value.isEmpty() && !value.equals(PARSING_PROBLEM_MESSAGE);
+	}
+
 	void loadMap(Reader reader) throws IOException {
 		BufferedReader input = new BufferedReader(reader);
 		for (String line = input.readLine(); line != null; line = input.readLine()) {
 			if (!line.trim().isEmpty() && !line.startsWith(COMMENT_CHAR)) {
 				String key = getKey(line);
 				String value = getValue(line);
-				this.map.put(key, value);
+				if (isValidValue(value)) {
+					this.map.put(key, value);
+				}
 			}
 		}
 		input.close();

@@ -21,6 +21,8 @@ import org.wikidata.wdtk.dumpfiles.MwRevisionProcessor;
  */
 public class DependencyPropertiesMwRevisionProcessor implements MwRevisionProcessor {
 
+	public static final String PARSING_PROBLEM_MESSAGE = "ERROR";
+
 	private final BufferedWriter output;
 
 	/**
@@ -74,7 +76,7 @@ public class DependencyPropertiesMwRevisionProcessor implements MwRevisionProces
 				entities.addAll((new EntityCollector()).collectEntities(mwRevision));
 
 			} catch (IOException e) {
-				entities.add("ERROR");
+				entities.add(PARSING_PROBLEM_MESSAGE);
 			}
 
 			try {
