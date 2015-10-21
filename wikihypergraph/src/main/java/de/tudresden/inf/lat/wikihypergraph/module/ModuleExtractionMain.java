@@ -31,7 +31,7 @@ public class ModuleExtractionMain {
 	public static final String HELP = "Parameters: <input file> <output file>" //
 			+ "\n" //
 			+ "\nwhere" //
-			+ "\n <input file>  : file name of list of items" //
+			+ "\n <input file>  : file name of list of entities" //
 			+ "\n <output file> : file name of output file" //
 			+ "\n" //
 			+ "\n";
