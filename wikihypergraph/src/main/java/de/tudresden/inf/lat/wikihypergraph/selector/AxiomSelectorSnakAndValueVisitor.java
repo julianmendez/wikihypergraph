@@ -35,6 +35,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 	public static final String EXPECTED_FORMAT = "application/json";
 	public static final String REFERENCE_PREFIX = "R";
 	public static final String STATEMENT_PREFIX = "S";
+	public static final String PAIR_VALUE_PREFIX = "PV";
 	public static final String PARSING_PROBLEM_MESSAGE = "ERROR";
 
 	class EntitySnakVisitor implements SnakVisitor<List<SelectorTuple>> {
@@ -115,6 +116,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 	private long statementId = 0;
 	private long referenceId = 0;
+	private long pairValueId = 0;
 
 	public AxiomSelectorSnakAndValueVisitor() {
 	}
@@ -164,6 +166,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 		ret.add(new SelectorTuple(asStatement(this.statementId), asStatement(this.statementId + 1),
 				TypeAndRelationName.RELATION_HAS_TYPE, TypeAndRelationName.TYPE_STATEMENT));
 		this.statementId++;
+
 		long mainStatementId = this.statementId;
 		{
 			EntitySnakVisitor entityVisitor = new EntitySnakVisitor(this.statementId, subject);
@@ -183,10 +186,20 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 			for (SnakGroup snakGroup : reference.getSnakGroups()) {
 				for (Snak snak : snakGroup.getSnaks()) {
+					ret.add(new SelectorTuple(asStatement(this.statementId), asPairValue(this.pairValueId),
+							TypeAndRelationName.RELATION_HAS_TYPE, TypeAndRelationName.TYPE_PAIR_VALUE));
+					this.statementId++;
+
+					ret.add(new SelectorTuple(asStatement(this.statementId), asReference(this.referenceId),
+							TypeAndRelationName.RELATION_HAS_PAIR_VALUE, asPairValue(this.pairValueId)));
+					this.statementId++;
+
 					EntitySnakVisitor entityVisitor = new EntitySnakVisitor(this.statementId,
-							asReference(this.referenceId));
+							asPairValue(this.pairValueId));
 					ret.addAll(snak.accept(entityVisitor));
 					this.statementId++;
+
+					this.pairValueId++;
 				}
 			}
 			this.referenceId++;
@@ -218,6 +231,10 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 	String asStatement(long statementId) {
 		return STATEMENT_PREFIX + statementId;
+	}
+
+	String asPairValue(long pairValueId) {
+		return PAIR_VALUE_PREFIX + pairValueId;
 	}
 
 }
