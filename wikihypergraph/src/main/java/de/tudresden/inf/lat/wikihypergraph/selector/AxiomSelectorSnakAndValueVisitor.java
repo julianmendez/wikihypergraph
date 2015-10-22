@@ -186,18 +186,30 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 			for (SnakGroup snakGroup : reference.getSnakGroups()) {
 				for (Snak snak : snakGroup.getSnaks()) {
-					ret.add(new SelectorTuple(asStatement(this.statementId), asPairValue(this.pairValueId),
-							TypeAndRelationName.RELATION_HAS_TYPE, TypeAndRelationName.TYPE_PAIR_VALUE));
-					this.statementId++;
-
-					ret.add(new SelectorTuple(asStatement(this.statementId), asReference(this.referenceId),
-							TypeAndRelationName.RELATION_HAS_PAIR_VALUE, asPairValue(this.pairValueId)));
-					this.statementId++;
 
 					EntitySnakVisitor entityVisitor = new EntitySnakVisitor(this.statementId,
 							asPairValue(this.pairValueId));
-					ret.addAll(snak.accept(entityVisitor));
-					this.statementId++;
+					List<SelectorTuple> pairValues = new ArrayList<SelectorTuple>();
+					pairValues.addAll(snak.accept(entityVisitor));
+
+					for (SelectorTuple currentPairValue : pairValues) {
+						ret.add(new SelectorTuple(asStatement(this.statementId), asPairValue(this.pairValueId),
+								TypeAndRelationName.RELATION_HAS_TYPE, TypeAndRelationName.TYPE_PAIR_VALUE));
+						this.statementId++;
+
+						ret.add(new SelectorTuple(asStatement(this.statementId), asReference(this.referenceId),
+								TypeAndRelationName.RELATION_HAS_PAIR_VALUE, asPairValue(this.pairValueId)));
+						this.statementId++;
+
+						ret.add(new SelectorTuple(asStatement(this.statementId), asPairValue(this.pairValueId),
+								TypeAndRelationName.RELATION_HAS_PROPERTY, currentPairValue.getRelation()));
+						this.statementId++;
+
+						ret.add(new SelectorTuple(asStatement(this.statementId), asPairValue(this.pairValueId),
+								TypeAndRelationName.RELATION_HAS_VALUE, currentPairValue.getObject()));
+						this.statementId++;
+
+					}
 
 					this.pairValueId++;
 				}
