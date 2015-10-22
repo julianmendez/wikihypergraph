@@ -160,11 +160,11 @@ public class AxiomSelectorSnakAndValueVisitor {
 			throw new IllegalArgumentException("Null argument.");
 		}
 
-		long mainStatementId = this.statementId;
 		List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
 		ret.add(new SelectorTuple(asStatement(this.statementId), asStatement(this.statementId + 1),
 				TypeAndRelationName.RELATION_HAS_TYPE, TypeAndRelationName.TYPE_STATEMENT));
 		this.statementId++;
+		long mainStatementId = this.statementId;
 		{
 			EntitySnakVisitor entityVisitor = new EntitySnakVisitor(this.statementId, subject);
 			Snak snak = statement.getClaim().getMainSnak();
@@ -173,14 +173,18 @@ public class AxiomSelectorSnakAndValueVisitor {
 		this.statementId++;
 
 		for (Reference reference : statement.getReferences()) {
+			ret.add(new SelectorTuple(asStatement(this.statementId), asReference(this.referenceId),
+					TypeAndRelationName.RELATION_HAS_TYPE, TypeAndRelationName.TYPE_REFERENCE));
+			this.statementId++;
+
 			ret.add(new SelectorTuple(asStatement(this.statementId), asStatement(mainStatementId),
 					TypeAndRelationName.RELATION_HAS_REFERENCE, asReference(this.referenceId)));
 			this.statementId++;
-			
+
 			for (SnakGroup snakGroup : reference.getSnakGroups()) {
 				for (Snak snak : snakGroup.getSnaks()) {
 					EntitySnakVisitor entityVisitor = new EntitySnakVisitor(this.statementId,
-							asStatement(mainStatementId));
+							asReference(this.referenceId));
 					ret.addAll(snak.accept(entityVisitor));
 					this.statementId++;
 				}
