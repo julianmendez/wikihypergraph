@@ -77,7 +77,7 @@ public class ModuleExtractionMain {
 	void outputList(Set<Integer> set, Writer writer, IntegerManager manager) throws IOException {
 		for (Integer key : set) {
 			writer.write(manager.asString(key));
-			writer.write(" ");
+			writer.write("\n");
 		}
 		writer.flush();
 	}
@@ -119,11 +119,7 @@ public class ModuleExtractionMain {
 		}
 		module.addAll(reachableVertices.keySet());
 
-		output.write("\n\nModule:\n");
 		outputList(module, output, manager);
-		output.write("\n\n\n");
-		output.write("Justification:\n");
-		outputJustification(reachableVertices, output, manager);
 		output.write("\n\n\n");
 		output.flush();
 	}
