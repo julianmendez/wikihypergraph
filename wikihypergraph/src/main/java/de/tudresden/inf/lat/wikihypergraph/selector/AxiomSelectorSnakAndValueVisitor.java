@@ -38,26 +38,22 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 		private long statement;
 		private String subject;
-		private String relation;
 
-		public EntitySnakVisitor(long statement, String subject, String relation) {
+		public EntitySnakVisitor(long statement, String subject) {
 			if (subject == null) {
-				throw new IllegalArgumentException("Null argument.");
-			}
-			if (relation == null) {
 				throw new IllegalArgumentException("Null argument.");
 			}
 
 			this.statement = statement;
 			this.subject = subject;
-			this.relation = relation;
 		}
 
 		@Override
 		public List<SelectorTuple> visit(ValueSnak snak) {
 			ValueSnakVisitor valueVisitor = new ValueSnakVisitor();
 			List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
-			SelectorTuple tuple = new SelectorTuple(STATEMENT_PREFIX + this.statement, this.subject, this.relation,
+			String relation = snak.getPropertyId().getId();
+			SelectorTuple tuple = new SelectorTuple(STATEMENT_PREFIX + this.statement, this.subject, relation,
 					snak.getValue().accept(valueVisitor));
 			this.statement += 1;
 			ret.add(tuple);
@@ -85,7 +81,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 		@Override
 		public String visit(EntityIdValue value) {
-			return value.toString();
+			return value.getId();
 		}
 
 		@Override
@@ -163,7 +159,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 		List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
 		Snak snak = statement.getClaim().getMainSnak();
-		EntitySnakVisitor entityVisitor = new EntitySnakVisitor(this.statementId, subject, "is-related-to");
+		EntitySnakVisitor entityVisitor = new EntitySnakVisitor(this.statementId, subject);
 		ret.addAll(snak.accept(entityVisitor));
 		this.statementId++;
 		return ret;
