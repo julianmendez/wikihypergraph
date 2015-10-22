@@ -12,7 +12,9 @@ import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.NoValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
+import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.SnakVisitor;
 import org.wikidata.wdtk.datamodel.interfaces.SomeValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
@@ -31,6 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AxiomSelectorSnakAndValueVisitor {
 
 	public static final String EXPECTED_FORMAT = "application/json";
+	public static final String REFERENCE_PREFIX = "R";
 	public static final String STATEMENT_PREFIX = "S";
 	public static final String PARSING_PROBLEM_MESSAGE = "ERROR";
 
@@ -55,7 +58,6 @@ public class AxiomSelectorSnakAndValueVisitor {
 			String relation = snak.getPropertyId().getId();
 			SelectorTuple tuple = new SelectorTuple(STATEMENT_PREFIX + this.statement, this.subject, relation,
 					snak.getValue().accept(valueVisitor));
-			this.statement += 1;
 			ret.add(tuple);
 			return ret;
 		}
@@ -112,6 +114,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 	}
 
 	private long statementId = 0;
+	private long referenceId = 0;
 
 	public AxiomSelectorSnakAndValueVisitor() {
 	}
@@ -157,11 +160,33 @@ public class AxiomSelectorSnakAndValueVisitor {
 			throw new IllegalArgumentException("Null argument.");
 		}
 
+		long mainStatementId = this.statementId;
 		List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
-		Snak snak = statement.getClaim().getMainSnak();
-		EntitySnakVisitor entityVisitor = new EntitySnakVisitor(this.statementId, subject);
-		ret.addAll(snak.accept(entityVisitor));
+		ret.add(new SelectorTuple(asStatement(this.statementId), asStatement(this.statementId + 1),
+				TypeAndRelationName.RELATION_HAS_TYPE, TypeAndRelationName.TYPE_STATEMENT));
 		this.statementId++;
+		{
+			EntitySnakVisitor entityVisitor = new EntitySnakVisitor(this.statementId, subject);
+			Snak snak = statement.getClaim().getMainSnak();
+			ret.addAll(snak.accept(entityVisitor));
+		}
+		this.statementId++;
+
+		for (Reference reference : statement.getReferences()) {
+			ret.add(new SelectorTuple(asStatement(this.statementId), asStatement(mainStatementId),
+					TypeAndRelationName.RELATION_HAS_REFERENCE, asReference(this.referenceId)));
+			this.statementId++;
+			
+			for (SnakGroup snakGroup : reference.getSnakGroups()) {
+				for (Snak snak : snakGroup.getSnaks()) {
+					EntitySnakVisitor entityVisitor = new EntitySnakVisitor(this.statementId,
+							asStatement(mainStatementId));
+					ret.addAll(snak.accept(entityVisitor));
+					this.statementId++;
+				}
+			}
+			this.referenceId++;
+		}
 		return ret;
 	}
 
@@ -181,6 +206,14 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 		}
 		return ret;
+	}
+
+	String asReference(long referenceId) {
+		return REFERENCE_PREFIX + referenceId;
+	}
+
+	String asStatement(long statementId) {
+		return STATEMENT_PREFIX + statementId;
 	}
 
 }
