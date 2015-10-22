@@ -89,7 +89,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 		@Override
 		public String visit(GlobeCoordinatesValue value) {
-			return value.toString();
+			return "\"" + value.toString() + "\"";
 		}
 
 		@Override
