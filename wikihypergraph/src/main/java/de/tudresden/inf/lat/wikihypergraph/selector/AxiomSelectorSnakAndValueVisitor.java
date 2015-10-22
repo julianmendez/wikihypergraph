@@ -109,7 +109,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 		@Override
 		public String visit(TimeValue value) {
-			return value.toString();
+			return "\"" + value.toString() + "\"";
 		}
 
 	}
