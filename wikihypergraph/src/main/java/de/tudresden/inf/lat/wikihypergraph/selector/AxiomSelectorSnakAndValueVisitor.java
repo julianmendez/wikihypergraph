@@ -31,77 +31,83 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AxiomSelectorSnakAndValueVisitor {
 
 	public static final String EXPECTED_FORMAT = "application/json";
+	public static final String STATEMENT_PREFIX = "S";
 
 	class EntitySnakVisitor implements SnakVisitor<List<SelectorTuple>> {
+
+		private long statement;
+		private String subject;
+		private String relation;
+
+		public EntitySnakVisitor(long statement, String subject, String relation) {
+			this.statement = statement;
+			this.subject = subject;
+			this.relation = relation;
+		}
 
 		@Override
 		public List<SelectorTuple> visit(ValueSnak snak) {
 			ValueSnakVisitor valueVisitor = new ValueSnakVisitor();
 			List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
-			ret.addAll(snak.getValue().accept(valueVisitor));
-			// FIXME
+			SelectorTuple tuple = new SelectorTuple(STATEMENT_PREFIX + this.statement, this.subject, this.relation,
+					snak.getValue().accept(valueVisitor));
+			this.statement += 1;
+			ret.add(tuple);
 			return ret;
 		}
 
 		@Override
 		public List<SelectorTuple> visit(SomeValueSnak snak) {
-			// FIXME
 			return Collections.emptyList();
 		}
 
 		@Override
 		public List<SelectorTuple> visit(NoValueSnak snak) {
-			// FIXME
 			return Collections.emptyList();
 		}
 
 	}
 
-	class ValueSnakVisitor implements ValueVisitor<List<SelectorTuple>> {
+	class ValueSnakVisitor implements ValueVisitor<String> {
 
 		@Override
-		public List<SelectorTuple> visit(DatatypeIdValue value) {
-			// FIXME
-			return Collections.emptyList();
+		public String visit(DatatypeIdValue value) {
+			return value.toString();
 		}
 
 		@Override
-		public List<SelectorTuple> visit(EntityIdValue value) {
-			// FIXME
-			return Collections.emptyList();
+		public String visit(EntityIdValue value) {
+			return value.toString();
 		}
 
 		@Override
-		public List<SelectorTuple> visit(GlobeCoordinatesValue value) {
-			// FIXME
-			return Collections.emptyList();
+		public String visit(GlobeCoordinatesValue value) {
+			return value.toString();
 		}
 
 		@Override
-		public List<SelectorTuple> visit(MonolingualTextValue value) {
-			// FIXME
-			return Collections.emptyList();
+		public String visit(MonolingualTextValue value) {
+			return value.toString();
 		}
 
 		@Override
-		public List<SelectorTuple> visit(QuantityValue value) {
-			// FIXME
-			return Collections.emptyList();
+		public String visit(QuantityValue value) {
+			return value.toString();
 		}
 
 		@Override
-		public List<SelectorTuple> visit(StringValue value) {
-			// FIXME
-			return Collections.emptyList();
+		public String visit(StringValue value) {
+			return "\"" + value.toString() + "\"";
 		}
 
 		@Override
-		public List<SelectorTuple> visit(TimeValue value) {
-			// FIXME
-			return Collections.emptyList();
+		public String visit(TimeValue value) {
+			return value.toString();
 		}
 
 	}
+
+	private long statementId = 0;
 
 	public AxiomSelectorSnakAndValueVisitor() {
 	}
@@ -110,26 +116,26 @@ public class AxiomSelectorSnakAndValueVisitor {
 		List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
 		List<StatementGroup> statementGroups = getStatementGroups(mwRevision);
 		for (StatementGroup statementGroup : statementGroups) {
-			ret.addAll(process(statementGroup));
+			ret.addAll(process(statementGroup, mwRevision.getTitle()));
 		}
 		return ret;
 	}
 
-	public List<SelectorTuple> process(StatementGroup statementGroup) {
+	public List<SelectorTuple> process(StatementGroup statementGroup, String subjectId) {
 		List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
 		List<Statement> statements = statementGroup.getStatements();
 		for (Statement statement : statements) {
-			ret.addAll(process(statement));
+			ret.addAll(process(statement, subjectId));
 		}
 		return ret;
 	}
 
-	public List<SelectorTuple> process(Statement statement) {
+	public List<SelectorTuple> process(Statement statement, String subjectId) {
 		List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
 		Snak snak = statement.getClaim().getMainSnak();
-		// FIXME
-		EntitySnakVisitor entityVisitor = new EntitySnakVisitor();
+		EntitySnakVisitor entityVisitor = new EntitySnakVisitor(this.statementId, subjectId, "is-related-to");
 		ret.addAll(snak.accept(entityVisitor));
+		this.statementId++;
 		return ret;
 	}
 

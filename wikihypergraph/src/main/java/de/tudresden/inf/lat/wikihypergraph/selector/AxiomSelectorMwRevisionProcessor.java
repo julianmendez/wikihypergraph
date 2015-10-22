@@ -19,6 +19,7 @@ public class AxiomSelectorMwRevisionProcessor implements MwRevisionProcessor {
 	public static final String PARSING_PROBLEM_MESSAGE = "ERROR";
 
 	private final BufferedWriter output;
+	private AxiomSelectorSnakAndValueVisitor visitor = new AxiomSelectorSnakAndValueVisitor();
 
 	public AxiomSelectorMwRevisionProcessor(Set<String> entities, Writer writer) {
 		if (writer == null) {
@@ -48,11 +49,9 @@ public class AxiomSelectorMwRevisionProcessor implements MwRevisionProcessor {
 	public void processRevision(MwRevision mwRevision) {
 		String title = mwRevision.getTitle();
 		if ((new IntegerManager()).isValid(title)) {
-			AxiomSelectorSnakAndValueVisitor visitor = new AxiomSelectorSnakAndValueVisitor();
-			List<SelectorTuple> tuples = new ArrayList<SelectorTuple>();
-
 			try {
-				tuples.addAll(visitor.process(mwRevision));
+				List<SelectorTuple> tuples = new ArrayList<SelectorTuple>();
+				tuples.addAll(this.visitor.process(mwRevision));
 				for (SelectorTuple tuple : tuples) {
 					this.output.write(tuple.toString());
 					this.output.newLine();
