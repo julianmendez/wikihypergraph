@@ -29,6 +29,19 @@ public class SelectorTuple {
 	 *            object
 	 */
 	public SelectorTuple(String statement, String subject, String relation, String object) {
+		if (statement == null) {
+			throw new IllegalArgumentException("Null argument.");
+		}
+		if (subject == null) {
+			throw new IllegalArgumentException("Null argument.");
+		}
+		if (relation == null) {
+			throw new IllegalArgumentException("Null argument.");
+		}
+		if (object == null) {
+			throw new IllegalArgumentException("Null argument.");
+		}
+
 		this.statement = statement;
 		this.subject = subject;
 		this.relation = relation;

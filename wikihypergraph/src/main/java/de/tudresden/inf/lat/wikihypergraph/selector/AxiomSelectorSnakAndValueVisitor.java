@@ -32,6 +32,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 	public static final String EXPECTED_FORMAT = "application/json";
 	public static final String STATEMENT_PREFIX = "S";
+	public static final String PARSING_PROBLEM_MESSAGE = "ERROR";
 
 	class EntitySnakVisitor implements SnakVisitor<List<SelectorTuple>> {
 
@@ -40,6 +41,13 @@ public class AxiomSelectorSnakAndValueVisitor {
 		private String relation;
 
 		public EntitySnakVisitor(long statement, String subject, String relation) {
+			if (subject == null) {
+				throw new IllegalArgumentException("Null argument.");
+			}
+			if (relation == null) {
+				throw new IllegalArgumentException("Null argument.");
+			}
+
 			this.statement = statement;
 			this.subject = subject;
 			this.relation = relation;
@@ -97,7 +105,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 		@Override
 		public String visit(StringValue value) {
-			return "\"" + value.toString() + "\"";
+			return value.toString();
 		}
 
 		@Override
@@ -113,27 +121,49 @@ public class AxiomSelectorSnakAndValueVisitor {
 	}
 
 	public List<SelectorTuple> process(MwRevision mwRevision) throws JsonProcessingException, IOException {
+		if (mwRevision == null) {
+			throw new IllegalArgumentException("Null argument.");
+		}
+
 		List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
 		List<StatementGroup> statementGroups = getStatementGroups(mwRevision);
 		for (StatementGroup statementGroup : statementGroups) {
-			ret.addAll(process(statementGroup, mwRevision.getTitle()));
+			String subject = mwRevision.getTitle();
+			if (subject == null) {
+				subject = PARSING_PROBLEM_MESSAGE;
+			}
+			ret.addAll(process(statementGroup, subject));
 		}
 		return ret;
 	}
 
-	public List<SelectorTuple> process(StatementGroup statementGroup, String subjectId) {
+	public List<SelectorTuple> process(StatementGroup statementGroup, String subject) {
+		if (statementGroup == null) {
+			throw new IllegalArgumentException("Null argument.");
+		}
+		if (subject == null) {
+			throw new IllegalArgumentException("Null argument.");
+		}
+
 		List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
 		List<Statement> statements = statementGroup.getStatements();
 		for (Statement statement : statements) {
-			ret.addAll(process(statement, subjectId));
+			ret.addAll(process(statement, subject));
 		}
 		return ret;
 	}
 
-	public List<SelectorTuple> process(Statement statement, String subjectId) {
+	public List<SelectorTuple> process(Statement statement, String subject) {
+		if (statement == null) {
+			throw new IllegalArgumentException("Null argument.");
+		}
+		if (subject == null) {
+			throw new IllegalArgumentException("Null argument.");
+		}
+
 		List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
 		Snak snak = statement.getClaim().getMainSnak();
-		EntitySnakVisitor entityVisitor = new EntitySnakVisitor(this.statementId, subjectId, "is-related-to");
+		EntitySnakVisitor entityVisitor = new EntitySnakVisitor(this.statementId, subject, "is-related-to");
 		ret.addAll(snak.accept(entityVisitor));
 		this.statementId++;
 		return ret;
