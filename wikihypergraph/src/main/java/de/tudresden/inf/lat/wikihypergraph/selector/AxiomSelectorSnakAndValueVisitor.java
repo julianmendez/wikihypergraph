@@ -39,6 +39,9 @@ public class AxiomSelectorSnakAndValueVisitor {
 	public static final String PAIR_VALUE_PREFIX = "PV";
 	public static final String PARSING_PROBLEM_MESSAGE = "ERROR";
 
+	static final char QUOTES_CHAR = '"';
+	static final char UNDERSCORE_CHAR = '_';
+
 	class EntitySnakVisitor implements SnakVisitor<List<SelectorTuple>> {
 
 		private long statement;
@@ -90,17 +93,17 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 		@Override
 		public String visit(GlobeCoordinatesValue value) {
-			return "\"" + value.toString() + "\"";
+			return QUOTES_CHAR + value.toString() + QUOTES_CHAR;
 		}
 
 		@Override
 		public String visit(MonolingualTextValue value) {
-			return value.toString();
+			return QUOTES_CHAR + value.toString().replace(QUOTES_CHAR, UNDERSCORE_CHAR) + QUOTES_CHAR;
 		}
 
 		@Override
 		public String visit(QuantityValue value) {
-			return value.toString();
+			return QUOTES_CHAR + value.toString() + QUOTES_CHAR;
 		}
 
 		@Override
@@ -110,7 +113,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 		@Override
 		public String visit(TimeValue value) {
-			return "\"" + value.toString() + "\"";
+			return QUOTES_CHAR + value.toString() + QUOTES_CHAR;
 		}
 
 	}
