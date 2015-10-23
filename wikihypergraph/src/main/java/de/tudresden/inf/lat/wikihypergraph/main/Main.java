@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -36,7 +38,7 @@ public class Main {
 			+ "\n" //
 			+ "\n";
 
-	public static final String TEMPORARY_MODULE_FILE_NAME = "temporary_module.txt";
+	public static final String TEMPORARY_MODULE_FILE_NAME = "extracted-module.txt";
 	public static final String TEMPORARY_DEPENDENCY_FILE_NAME = "dependencies.properties";
 
 	// this is the default list of items to process
@@ -108,7 +110,7 @@ public class Main {
 	 * @throws IOException
 	 *             if something goes wrong with I/O
 	 */
-	Set<String> readListOfItems(Reader reader) throws IOException {
+	Set<String> readEntities(Reader reader) throws IOException {
 		BufferedReader input = new BufferedReader(reader);
 		Set<String> ret = new TreeSet<String>();
 		for (String line = input.readLine(); line != null; line = input.readLine()) {
@@ -119,23 +121,23 @@ public class Main {
 	}
 
 	/**
-	 * Extracts the module.
+	 * Writes entities.
 	 * 
-	 * @param setOfItems
-	 *            set of items
-	 * @return the extracted module
+	 * @param list
+	 *            list
+	 * @param writer
+	 *            writer
 	 * @throws IOException
 	 *             if something goes wrong with I/O
 	 */
-	public Set<String> extractModule(Set<String> setOfItems) throws IOException {
-		FileWriter temporaryFile = new FileWriter(TEMPORARY_MODULE_FILE_NAME);
-		ModuleExtractionMain moduleExtractor = new ModuleExtractionMain();
-		moduleExtractor.extractModule(setOfItems, TEMPORARY_DEPENDENCY_FILE_NAME, temporaryFile);
-		temporaryFile.flush();
-		temporaryFile.close();
+	void writeEntities(Collection<String> list, Writer writer) throws IOException {
+		for (String entity : list) {
+			writer.write(entity);
+			writer.write("\n");
+		}
+		writer.flush();
+		writer.close();
 
-		Set<String> ret = readListOfItems(new FileReader(TEMPORARY_MODULE_FILE_NAME));
-		return ret;
 	}
 
 	/**
@@ -153,8 +155,12 @@ public class Main {
 		if (setOfItems.isEmpty()) {
 			axiomSelector.selectAxioms(writer);
 		} else {
-			Set<String> module = extractModule(setOfItems);
-			axiomSelector.selectAxioms(module, writer);
+			ModuleExtractionMain moduleExtractor = new ModuleExtractionMain(TEMPORARY_DEPENDENCY_FILE_NAME);
+			Collection<String> module = moduleExtractor.extractModule(setOfItems);
+			writeEntities(module, new FileWriter(TEMPORARY_MODULE_FILE_NAME));
+			Set<String> moduleAsSet = new HashSet<String>();
+			moduleAsSet.addAll(module);
+			axiomSelector.selectAxioms(moduleAsSet, writer);
 		}
 		writer.flush();
 	}
@@ -170,7 +176,7 @@ public class Main {
 	 *             if something goes wrong with I/O
 	 */
 	public void run(Reader reader, Writer writer) throws IOException {
-		Set<String> listOfItems = readListOfItems(reader);
+		Set<String> listOfItems = readEntities(reader);
 		run(listOfItems, writer);
 	}
 

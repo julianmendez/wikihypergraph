@@ -5,6 +5,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -26,10 +29,13 @@ public class ModuleExtractionMain {
 	final static char NEW_LINE_CHAR = '\n';
 	final static char TAB_CHAR = '\t';
 
+	private final String temporaryFileName;
+
 	/**
 	 * Constructs a new module extractor.
 	 */
-	public ModuleExtractionMain() {
+	public ModuleExtractionMain(String temporaryFileName) {
+		this.temporaryFileName = temporaryFileName;
 	}
 
 	/**
@@ -67,7 +73,7 @@ public class ModuleExtractionMain {
 	}
 
 	/**
-	 * Writes the module.
+	 * Returns the module.
 	 * 
 	 * @param setOfItems
 	 *            set of items
@@ -77,10 +83,11 @@ public class ModuleExtractionMain {
 	 *            output
 	 * @param manager
 	 *            integer manager
+	 * @return the module
 	 * @throws IOException
 	 *             if something goes wrong with I/O
 	 */
-	void writeModule(Set<Integer> setOfItems, AdjacencyMap dependencyMap, Writer output, IntegerManager manager)
+	Collection<String> getModule(Set<Integer> setOfItems, AdjacencyMap dependencyMap, IntegerManager manager)
 			throws IOException {
 		ReachabilityFinder finder = new ReachabilityFinder(dependencyMap);
 		Set<Integer> module = new TreeSet<Integer>();
@@ -91,35 +98,33 @@ public class ModuleExtractionMain {
 		}
 		module.addAll(reachableVertices.keySet());
 
-		outputList(module, output, manager);
-		output.write(NEW_LINE_CHAR);
-		output.write(NEW_LINE_CHAR);
-		output.write(NEW_LINE_CHAR);
-		output.flush();
+		List<String> ret = new ArrayList<String>();
+		ret.addAll(manager.asString(module));
+		return ret;
 	}
 
 	/**
-	 * Runs this dump processor.
+	 * Runs module extractor.
 	 * 
-	 * @param setOfItems
+	 * @param setOfEntities
 	 *            set of items
 	 * @param output
 	 *            output
 	 * @throws IOException
 	 *             if something goes wrong with I/O
 	 */
-	public void extractModule(Set<String> setOfItems, String temporaryFileName, Writer output) throws IOException {
-
-		File propertiesFile = new File(temporaryFileName);
+	public Collection<String> extractModule(Collection<String> setOfEntities) throws IOException {
+		File propertiesFile = new File(this.temporaryFileName);
 		if (!propertiesFile.exists()) {
 			downloadDependencies(new FileWriter(propertiesFile));
 		}
 
 		IntegerManager manager = new IntegerManager();
-		Set<Integer> setOfItemIdentifiers = new TreeSet<Integer>();
-		setOfItemIdentifiers.addAll(manager.asNumber(setOfItems));
+		Set<Integer> setOfEntityIdentifiers = new TreeSet<Integer>();
+		setOfEntityIdentifiers.addAll(manager.asNumber(setOfEntities));
 		MapOnFile dependencyMap = new MapOnFile(new FileReader(propertiesFile));
-		writeModule(setOfItemIdentifiers, dependencyMap, output, manager);
+		Collection<String> ret = getModule(setOfEntityIdentifiers, dependencyMap, manager);
+		return ret;
 	}
 
 }
