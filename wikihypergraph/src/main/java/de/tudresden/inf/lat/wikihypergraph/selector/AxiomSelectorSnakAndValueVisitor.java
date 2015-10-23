@@ -158,6 +158,12 @@ public class AxiomSelectorSnakAndValueVisitor {
 		return ret;
 	}
 
+	void addTuple(List<SelectorTuple> list, String subject, String relation, String object) {
+		SelectorTuple tuple = new SelectorTuple(asStatement(this.statementId), subject, relation, object);
+		list.add(tuple);
+		this.statementId++;
+	}
+
 	public List<SelectorTuple> process(Statement statement, String subject) {
 		if (statement == null) {
 			throw new IllegalArgumentException("Null argument.");
@@ -167,9 +173,8 @@ public class AxiomSelectorSnakAndValueVisitor {
 		}
 
 		List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
-		ret.add(new SelectorTuple(asStatement(this.statementId), asStatement(this.statementId + 1),
-				TypeAndRelationName.RELATION_HAS_TYPE, TypeAndRelationName.TYPE_STATEMENT));
-		this.statementId++;
+		addTuple(ret, asStatement(this.statementId + 1), TypeAndRelationName.RELATION_HAS_TYPE,
+				TypeAndRelationName.TYPE_STATEMENT);
 
 		long mainStatementId = this.statementId;
 		{
@@ -180,13 +185,11 @@ public class AxiomSelectorSnakAndValueVisitor {
 		this.statementId++;
 
 		for (Reference reference : statement.getReferences()) {
-			ret.add(new SelectorTuple(asStatement(this.statementId), asReference(this.referenceId),
-					TypeAndRelationName.RELATION_HAS_TYPE, TypeAndRelationName.TYPE_REFERENCE));
-			this.statementId++;
+			addTuple(ret, asReference(this.referenceId), TypeAndRelationName.RELATION_HAS_TYPE,
+					TypeAndRelationName.TYPE_REFERENCE);
 
-			ret.add(new SelectorTuple(asStatement(this.statementId), asStatement(mainStatementId),
-					TypeAndRelationName.RELATION_HAS_REFERENCE, asReference(this.referenceId)));
-			this.statementId++;
+			addTuple(ret, asStatement(mainStatementId), TypeAndRelationName.RELATION_HAS_REFERENCE,
+					asReference(this.referenceId));
 
 			for (SnakGroup snakGroup : reference.getSnakGroups()) {
 				for (Snak snak : snakGroup.getSnaks()) {
@@ -197,21 +200,17 @@ public class AxiomSelectorSnakAndValueVisitor {
 					pairValues.addAll(snak.accept(entityVisitor));
 
 					for (SelectorTuple currentPairValue : pairValues) {
-						ret.add(new SelectorTuple(asStatement(this.statementId), asPairValue(this.pairValueId),
-								TypeAndRelationName.RELATION_HAS_TYPE, TypeAndRelationName.TYPE_PAIR_VALUE));
-						this.statementId++;
+						addTuple(ret, asPairValue(this.pairValueId), TypeAndRelationName.RELATION_HAS_TYPE,
+								TypeAndRelationName.TYPE_PAIR_VALUE);
 
-						ret.add(new SelectorTuple(asStatement(this.statementId), asReference(this.referenceId),
-								TypeAndRelationName.RELATION_HAS_PAIR_VALUE, asPairValue(this.pairValueId)));
-						this.statementId++;
+						addTuple(ret, asReference(this.referenceId), TypeAndRelationName.RELATION_HAS_PAIR_VALUE,
+								asPairValue(this.pairValueId));
 
-						ret.add(new SelectorTuple(asStatement(this.statementId), asPairValue(this.pairValueId),
-								TypeAndRelationName.RELATION_HAS_PROPERTY, currentPairValue.getRelation()));
-						this.statementId++;
+						addTuple(ret, asPairValue(this.pairValueId), TypeAndRelationName.RELATION_HAS_PROPERTY,
+								currentPairValue.getRelation());
 
-						ret.add(new SelectorTuple(asStatement(this.statementId), asPairValue(this.pairValueId),
-								TypeAndRelationName.RELATION_HAS_VALUE, currentPairValue.getObject()));
-						this.statementId++;
+						addTuple(ret, asPairValue(this.pairValueId), TypeAndRelationName.RELATION_HAS_VALUE,
+								currentPairValue.getObject());
 
 					}
 
