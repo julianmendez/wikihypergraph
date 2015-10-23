@@ -111,6 +111,7 @@ public class ModuleExtractionMain {
 	 * 
 	 * @param setOfEntities
 	 *            set of items
+	 * @return the module
 	 * @throws IOException
 	 *             if something goes wrong with I/O
 	 */
