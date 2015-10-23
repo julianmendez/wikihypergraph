@@ -28,6 +28,7 @@ import org.wikidata.wdtk.datamodel.json.jackson.JacksonTermedStatementDocument;
 import org.wikidata.wdtk.dumpfiles.MwRevision;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AxiomSelectorSnakAndValueVisitor {
@@ -229,9 +230,13 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 			ObjectMapper mapper = new ObjectMapper();
 			String text = mwRevision.getText();
-			JacksonTermedStatementDocument document = mapper.readValue(text, JacksonTermedStatementDocument.class);
-			document.setSiteIri(Datamodel.SITE_WIKIDATA);
-			ret.addAll(document.getStatementGroups());
+			try {
+				JacksonTermedStatementDocument document = mapper.readValue(text, JacksonTermedStatementDocument.class);
+				document.setSiteIri(Datamodel.SITE_WIKIDATA);
+				ret.addAll(document.getStatementGroups());
+			} catch (JsonMappingException e) {
+				// if the page cannot be parsed, it is ignored
+			}
 
 		}
 		return ret;
