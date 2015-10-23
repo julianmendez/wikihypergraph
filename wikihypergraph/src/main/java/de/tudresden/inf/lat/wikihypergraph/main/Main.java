@@ -16,7 +16,9 @@ import de.tudresden.inf.lat.wikihypergraph.module.ModuleExtractionMain;
 import de.tudresden.inf.lat.wikihypergraph.selector.AxiomSelectorMain;
 
 /**
- * This is the main class.
+ * This is the main class. An object of this class reads a list of properties
+ * and items, extracts a module, and outputs tuples with the information in the
+ * pages in the module.
  * 
  * @author Julian Mendez
  */
@@ -25,7 +27,7 @@ public class Main {
 	public static final String HELP = "Parameters: <input file> <output file>" //
 			+ "\n" //
 			+ "\nwhere" //
-			+ "\n <input file>  : file name of list of items" //
+			+ "\n <input file>  : file name of list of properties and items" //
 			+ "\n <output file> : file name of output file" //
 			+ "\n" //
 			+ "\n" //
@@ -143,20 +145,20 @@ public class Main {
 	/**
 	 * Extracts a module and runs the selector.
 	 * 
-	 * @param setOfItems
-	 *            set of items
+	 * @param setOfEntities
+	 *            set of entities
 	 * @param writer
 	 *            writer
 	 * @throws IOException
 	 *             if something goes wrong with I/O
 	 */
-	public void run(Set<String> setOfItems, Writer writer) throws IOException {
+	public void run(Set<String> setOfEntities, Writer writer) throws IOException {
 		AxiomSelectorMain axiomSelector = new AxiomSelectorMain();
-		if (setOfItems.isEmpty()) {
+		if (setOfEntities.isEmpty()) {
 			axiomSelector.selectAxioms(writer);
 		} else {
 			ModuleExtractionMain moduleExtractor = new ModuleExtractionMain(TEMPORARY_DEPENDENCY_FILE_NAME);
-			Collection<String> module = moduleExtractor.extractModule(setOfItems);
+			Collection<String> module = moduleExtractor.extractModule(setOfEntities);
 			writeEntities(module, new FileWriter(TEMPORARY_MODULE_FILE_NAME));
 			Set<String> moduleAsSet = new HashSet<String>();
 			moduleAsSet.addAll(module);
