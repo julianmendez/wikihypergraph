@@ -31,6 +31,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * An object of this class is a visitor for snaks and values.
+ * 
+ * @author Julian Mendez
+ *
+ */
 public class AxiomSelectorSnakAndValueVisitor {
 
 	public static final String EXPECTED_FORMAT = "application/json";
@@ -42,6 +48,12 @@ public class AxiomSelectorSnakAndValueVisitor {
 	static final char QUOTES_CHAR = '"';
 	static final char UNDERSCORE_CHAR = '_';
 
+	/**
+	 * An object of this class is a visitor for snaks.
+	 * 
+	 * @author Julian Mendez
+	 *
+	 */
 	class EntitySnakVisitor implements SnakVisitor<List<SelectorTuple>> {
 
 		private long statement;
@@ -79,6 +91,12 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 	}
 
+	/**
+	 * An object of this class is a visitor for values.
+	 * 
+	 * @author Julian Mendez
+	 *
+	 */
 	class ValueSnakVisitor implements ValueVisitor<String> {
 
 		@Override
@@ -122,9 +140,23 @@ public class AxiomSelectorSnakAndValueVisitor {
 	private long referenceId = 0;
 	private long pairValueId = 0;
 
+	/**
+	 * Constructs a new axiom selector, visitor of snaks and values.
+	 */
 	public AxiomSelectorSnakAndValueVisitor() {
 	}
 
+	/**
+	 * Processes a revision and returns a list of selector tuples.
+	 * 
+	 * @param mwRevision
+	 *            revision
+	 * @return a list of selector tuples
+	 * @throws JsonProcessingException
+	 *             if something goes wrong with parsing
+	 * @throws IOException
+	 *             if something goes wrong with I/O
+	 */
 	public List<SelectorTuple> process(MwRevision mwRevision) throws JsonProcessingException, IOException {
 		if (mwRevision == null) {
 			throw new IllegalArgumentException("Null argument.");
@@ -158,12 +190,6 @@ public class AxiomSelectorSnakAndValueVisitor {
 		return ret;
 	}
 
-	void addTuple(List<SelectorTuple> list, String subject, String relation, String object) {
-		SelectorTuple tuple = new SelectorTuple(asStatement(this.statementId), subject, relation, object);
-		list.add(tuple);
-		this.statementId++;
-	}
-
 	public List<SelectorTuple> process(Statement statement, String subject) {
 		if (statement == null) {
 			throw new IllegalArgumentException("Null argument.");
@@ -185,41 +211,85 @@ public class AxiomSelectorSnakAndValueVisitor {
 		this.statementId++;
 
 		for (Reference reference : statement.getReferences()) {
-			addTuple(ret, asReference(this.referenceId), TypeAndRelationName.RELATION_HAS_TYPE,
-					TypeAndRelationName.TYPE_REFERENCE);
-
-			addTuple(ret, asStatement(mainStatementId), TypeAndRelationName.RELATION_HAS_REFERENCE,
-					asReference(this.referenceId));
-
-			for (SnakGroup snakGroup : reference.getSnakGroups()) {
-				for (Snak snak : snakGroup.getSnaks()) {
-
-					EntitySnakVisitor entityVisitor = new EntitySnakVisitor(this.statementId,
-							asPairValue(this.pairValueId));
-					List<SelectorTuple> pairValues = new ArrayList<SelectorTuple>();
-					pairValues.addAll(snak.accept(entityVisitor));
-
-					for (SelectorTuple currentPairValue : pairValues) {
-						addTuple(ret, asPairValue(this.pairValueId), TypeAndRelationName.RELATION_HAS_TYPE,
-								TypeAndRelationName.TYPE_PAIR_VALUE);
-
-						addTuple(ret, asReference(this.referenceId), TypeAndRelationName.RELATION_HAS_PAIR_VALUE,
-								asPairValue(this.pairValueId));
-
-						addTuple(ret, asPairValue(this.pairValueId), TypeAndRelationName.RELATION_HAS_PROPERTY,
-								currentPairValue.getRelation());
-
-						addTuple(ret, asPairValue(this.pairValueId), TypeAndRelationName.RELATION_HAS_VALUE,
-								currentPairValue.getObject());
-
-					}
-
-					this.pairValueId++;
-				}
-			}
-			this.referenceId++;
+			addReference(ret, reference, mainStatementId);
 		}
 		return ret;
+	}
+
+	/**
+	 * Adds a selector tuple to the given list.
+	 * 
+	 * @param list
+	 *            list of selector tuples
+	 * @param subject
+	 *            subject
+	 * @param relation
+	 *            relation
+	 * @param object
+	 *            object
+	 */
+	void addTuple(List<SelectorTuple> list, String subject, String relation, String object) {
+		SelectorTuple tuple = new SelectorTuple(asStatement(this.statementId), subject, relation, object);
+		list.add(tuple);
+		this.statementId++;
+	}
+
+	/**
+	 * Adds a pair value to a list of selector tuples.
+	 * 
+	 * @param list
+	 *            list of selector tuple
+	 * @param pairValue
+	 *            pair value as a selector tuple where only the relation and
+	 *            object are used
+	 */
+	void addPairValue(List<SelectorTuple> list, SelectorTuple pairValue) {
+		addTuple(list, asPairValue(this.pairValueId), TypeAndRelationName.RELATION_HAS_TYPE,
+				TypeAndRelationName.TYPE_PAIR_VALUE);
+
+		addTuple(list, asReference(this.referenceId), TypeAndRelationName.RELATION_HAS_PAIR_VALUE,
+				asPairValue(this.pairValueId));
+
+		addTuple(list, asPairValue(this.pairValueId), TypeAndRelationName.RELATION_HAS_PROPERTY,
+				pairValue.getRelation());
+
+		addTuple(list, asPairValue(this.pairValueId), TypeAndRelationName.RELATION_HAS_VALUE, pairValue.getObject());
+	}
+
+	/**
+	 * Adds the pair values in a snak to a list of selector tuples.
+	 * 
+	 * @param list
+	 *            list of selector tuple
+	 * @param snak
+	 *            snak
+	 */
+	void addPairValuesInSnak(List<SelectorTuple> list, Snak snak) {
+		EntitySnakVisitor entityVisitor = new EntitySnakVisitor(this.statementId, asPairValue(this.pairValueId));
+		List<SelectorTuple> pairValues = new ArrayList<SelectorTuple>();
+		pairValues.addAll(snak.accept(entityVisitor));
+
+		for (SelectorTuple currentPairValue : pairValues) {
+			addPairValue(list, currentPairValue);
+		}
+		this.pairValueId++;
+
+	}
+
+	void addReference(List<SelectorTuple> ret, Reference reference, long mainStatementId) {
+		addTuple(ret, asReference(this.referenceId), TypeAndRelationName.RELATION_HAS_TYPE,
+				TypeAndRelationName.TYPE_REFERENCE);
+
+		addTuple(ret, asStatement(mainStatementId), TypeAndRelationName.RELATION_HAS_REFERENCE,
+				asReference(this.referenceId));
+
+		for (SnakGroup snakGroup : reference.getSnakGroups()) {
+			for (Snak snak : snakGroup.getSnaks()) {
+				addPairValuesInSnak(ret, snak);
+			}
+		}
+		this.referenceId++;
+
 	}
 
 	List<StatementGroup> getStatementGroups(MwRevision mwRevision) throws JsonProcessingException, IOException {
