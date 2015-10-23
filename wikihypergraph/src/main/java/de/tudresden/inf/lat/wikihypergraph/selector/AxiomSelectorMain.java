@@ -40,8 +40,6 @@ public class AxiomSelectorMain {
 	/**
 	 * Selects pages from a set of properties and items and outputs tuples.
 	 * 
-	 * @param entities
-	 *            properties and items
 	 * @param output
 	 *            output
 	 */

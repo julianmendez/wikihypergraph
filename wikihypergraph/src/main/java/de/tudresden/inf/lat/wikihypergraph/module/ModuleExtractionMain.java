@@ -33,6 +33,9 @@ public class ModuleExtractionMain {
 
 	/**
 	 * Constructs a new module extractor.
+	 * 
+	 * @param temporaryFileName
+	 *            temporary file name
 	 */
 	public ModuleExtractionMain(String temporaryFileName) {
 		this.temporaryFileName = temporaryFileName;
@@ -108,8 +111,6 @@ public class ModuleExtractionMain {
 	 * 
 	 * @param setOfEntities
 	 *            set of items
-	 * @param output
-	 *            output
 	 * @throws IOException
 	 *             if something goes wrong with I/O
 	 */
