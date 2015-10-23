@@ -37,4 +37,19 @@ public class AxiomSelectorMain {
 		controller.processMostRecentMainDump();
 	}
 
+	/**
+	 * Selects pages from a set of properties and items and outputs tuples.
+	 * 
+	 * @param entities
+	 *            properties and items
+	 * @param output
+	 *            output
+	 */
+	public void selectAxioms(Writer output) {
+		DumpProcessingController controller = new DumpProcessingController(WIKIDATAWIKI);
+		AxiomSelectorMwRevisionProcessor mwRevisionProcessor = new AxiomSelectorMwRevisionProcessor(output);
+		controller.registerMwRevisionProcessor(mwRevisionProcessor, null, true);
+		controller.processMostRecentMainDump();
+	}
+
 }

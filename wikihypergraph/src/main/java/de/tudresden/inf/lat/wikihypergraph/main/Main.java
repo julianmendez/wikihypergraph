@@ -6,21 +6,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 
-import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
-import org.wikidata.wdtk.dumpfiles.MwRevisionProcessor;
+import de.tudresden.inf.lat.wikihypergraph.module.ModuleExtractionMain;
+import de.tudresden.inf.lat.wikihypergraph.selector.AxiomSelectorMain;
 
 /**
- * This is the main class to process the dump files.
+ * This is the main class.
  * 
  * @author Julian Mendez
  */
 public class Main {
-
-	public static final String WIKIDATAWIKI = "wikidatawiki";
 
 	public static final String HELP = "Parameters: <input file> <output file>" //
 			+ "\n" //
@@ -28,7 +26,18 @@ public class Main {
 			+ "\n <input file>  : file name of list of items" //
 			+ "\n <output file> : file name of output file" //
 			+ "\n" //
+			+ "\n" //
+			+ "\nThis program reads an input file containing a set of properties and items." //
+			+ "\nThis input file needs to have one property or item per line." //
+			+ "\nIf the read set is non-empty, the processor extracts a module." //
+			+ "\nIf the read set is empty, the processor assumes that the module comprises the whole domain." //
+			+ "\nThe processor outputs the tuples based on the elements of the module." //
+			+ "\n" //
+			+ "\n" //
 			+ "\n";
+
+	public static final String TEMPORARY_MODULE_FILE_NAME = "temporary_module.txt";
+	public static final String TEMPORARY_DEPENDENCY_FILE_NAME = "dependency.properties";
 
 	// this is the default list of items to process
 	private Reader input = null;
@@ -39,72 +48,70 @@ public class Main {
 	Main() {
 	}
 
+	/**
+	 * Constructs a new processor.
+	 * 
+	 * @param input
+	 *            input
+	 * @param output
+	 *            output
+	 */
 	public Main(Reader input, Writer output) {
 		this.input = input;
 		this.output = output;
 	}
 
+	/**
+	 * Returns the input.
+	 * 
+	 * @return the input
+	 */
 	public Reader getInput() {
 		return input;
 	}
 
+	/**
+	 * Sets the input.
+	 * 
+	 * @param input
+	 *            input
+	 */
 	public void setInput(Reader input) {
 		this.input = input;
 	}
 
+	/**
+	 * Returns the output.
+	 * 
+	 * @return the output
+	 */
 	public Writer getOutput() {
 		return output;
 	}
 
+	/**
+	 * Sets the output.
+	 * 
+	 * @param output
+	 *            output
+	 */
 	public void setOutput(Writer output) {
 		this.output = output;
 	}
 
 	/**
-	 * Processes the most recent dump.
+	 * Reads a list of items.
 	 * 
-	 * @param controller
-	 *            dump processing controller
-	 * @param listOfItems
-	 *            list of items
-	 * @param output
-	 *            writer that gets the result of the processing
+	 * @param reader
+	 *            reader
+	 * @return a list of items
+	 * @throws IOException
+	 *             if something goes wrong with I/O
 	 */
-	public void processDump(DumpProcessingController controller,
-			List<String> listOfItems, Writer output) {
-		MwRevisionProcessor mwRevisionProcessor = new EntityMwRevisionProcessor(
-				listOfItems, output);
-
-		// this registers the processor
-		controller.registerMwRevisionProcessor(mwRevisionProcessor, null, true);
-
-		try {
-
-			// this processes the most recent dump file
-			controller.processMostRecentMainDump();
-
-		} catch (AllItemsProcessedException e) {
-
-			// if all items have been already processed, ...
-			try {
-				output.write(e.getMessage());
-				output.write("\n");
-				output.flush();
-			} catch (IOException ex) {
-				throw new RuntimeException(ex);
-			}
-
-			// ... finish the revision processing
-			mwRevisionProcessor.finishRevisionProcessing();
-		}
-
-	}
-
-	List<String> readListOfItems(Reader reader0) throws IOException {
-		BufferedReader reader = new BufferedReader(reader0);
-		List<String> ret = new ArrayList<String>();
-		for (String line = reader.readLine(); line != null; line = reader
-				.readLine()) {
+	Set<String> readListOfItems(Reader reader) throws IOException {
+		BufferedReader input = new BufferedReader(reader);
+		Set<String> ret = new TreeSet<String>();
+		for (String line = input.readLine(); line != null; line = input.readLine()) {
 			String item = (new StringTokenizer(line)).nextToken();
 			ret.add(item);
 		}
@@ -112,36 +119,74 @@ public class Main {
 	}
 
 	/**
-	 * Runs this dump processor.
-	 *
+	 * Extracts the module.
+	 * 
+	 * @param setOfItems
+	 *            set of items
+	 * @return the extracted module
 	 * @throws IOException
-	 *             if something went wrong with the input/output
+	 *             if something goes wrong with I/O
 	 */
-	public void run() throws IOException {
-		DumpProcessingController controller = new DumpProcessingController(
-				WIKIDATAWIKI);
+	public Set<String> extractModule(Set<String> setOfItems) throws IOException {
+		FileWriter temporaryFile = new FileWriter(TEMPORARY_MODULE_FILE_NAME);
+		ModuleExtractionMain moduleExtractor = new ModuleExtractionMain();
+		moduleExtractor.extractModule(setOfItems, TEMPORARY_DEPENDENCY_FILE_NAME, temporaryFile);
+		temporaryFile.flush();
+		temporaryFile.close();
 
-		List<String> listOfItems = readListOfItems(this.input);
-
-		processDump(controller, listOfItems, this.output);
-
-		this.output.flush();
+		Set<String> ret = readListOfItems(new FileReader(TEMPORARY_MODULE_FILE_NAME));
+		return ret;
 	}
 
 	/**
-	 * Runs this dump processor using the given arguments.
+	 * Extracts a module and runs the selector.
+	 * 
+	 * @param setOfItems
+	 *            set of items
+	 * @param writer
+	 *            writer
+	 * @throws IOException
+	 *             if something goes wrong with I/O
+	 */
+	public void run(Set<String> setOfItems, Writer writer) throws IOException {
+		AxiomSelectorMain axiomSelector = new AxiomSelectorMain();
+		if (setOfItems.isEmpty()) {
+			axiomSelector.selectAxioms(writer);
+		} else {
+			Set<String> module = extractModule(setOfItems);
+			axiomSelector.selectAxioms(module, writer);
+		}
+		writer.flush();
+	}
+
+	/**
+	 * Extracts a module and runs the selector.
+	 *
+	 * @param reader
+	 *            reader
+	 * @param writer
+	 *            writer
+	 * @throws IOException
+	 *             if something goes wrong with I/O
+	 */
+	public void run(Reader reader, Writer writer) throws IOException {
+		Set<String> listOfItems = readListOfItems(reader);
+		run(listOfItems, writer);
+	}
+
+	/**
+	 * Extracts a module and runs the selector on the given arguments.
 	 * 
 	 * @param args
 	 *            arguments (1) input file and (2) output file
 	 * @throws IOException
-	 *             if something went wrong with the input/output
+	 *             if something goes wrong with I/O
 	 */
-
 	public void run(String args[]) throws IOException {
 		if (args.length == 2) {
 			this.input = new FileReader(args[0]);
 			this.output = new FileWriter(args[1]);
-			run();
+			run(this.input, this.output);
 			this.input.close();
 			this.output.flush();
 			this.output.close();
@@ -151,12 +196,12 @@ public class Main {
 	}
 
 	/**
-	 * Runs this dump processor.
+	 * Starts the processor.
 	 *
 	 * @param args
 	 *            arguments
 	 * @throws IOException
-	 *             if something went wrong with the input/output
+	 *             if something goes wrong with I/O
 	 */
 	public static void main(String[] args) throws IOException {
 		Main instance = new Main();

@@ -109,9 +109,9 @@ public class ModuleExtractionMain {
 	 * @throws IOException
 	 *             if something goes wrong with I/O
 	 */
-	public void extractModule(Set<String> setOfItems, Writer output) throws IOException {
+	public void extractModule(Set<String> setOfItems, String temporaryFileName, Writer output) throws IOException {
 
-		File propertiesFile = new File(TEMPORARY_FILE);
+		File propertiesFile = new File(temporaryFileName);
 		if (!propertiesFile.exists()) {
 			downloadDependencies(new FileWriter(propertiesFile));
 		}
