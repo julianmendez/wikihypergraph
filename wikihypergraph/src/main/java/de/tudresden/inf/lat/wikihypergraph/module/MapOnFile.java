@@ -20,7 +20,7 @@ import java.util.TreeSet;
  * @author Julian Mendez
  *
  */
-public class MapOnProperties implements AdjacencyMap {
+public class MapOnFile implements AdjacencyMap {
 
 	public static final String EQUALS_SIGN = "=";
 	public static final String COMMENT_CHAR = "#";
@@ -34,7 +34,7 @@ public class MapOnProperties implements AdjacencyMap {
 	 * @param reader
 	 *            file name of Properties file
 	 */
-	public MapOnProperties(Reader reader) {
+	public MapOnFile(Reader reader) {
 		if (reader == null) {
 			throw new IllegalArgumentException("Null argument.");
 		}
@@ -142,8 +142,8 @@ public class MapOnProperties implements AdjacencyMap {
 		if (obj == null) {
 			return false;
 		}
-		if (obj instanceof MapOnProperties) {
-			MapOnProperties other = (MapOnProperties) obj;
+		if (obj instanceof MapOnFile) {
+			MapOnFile other = (MapOnFile) obj;
 			return this.map.equals(other.map);
 		}
 		return false;
