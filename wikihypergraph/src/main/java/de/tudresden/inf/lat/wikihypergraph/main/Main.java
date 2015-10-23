@@ -37,7 +37,7 @@ public class Main {
 			+ "\n";
 
 	public static final String TEMPORARY_MODULE_FILE_NAME = "temporary_module.txt";
-	public static final String TEMPORARY_DEPENDENCY_FILE_NAME = "dependency.properties";
+	public static final String TEMPORARY_DEPENDENCY_FILE_NAME = "dependencies.properties";
 
 	// this is the default list of items to process
 	private Reader input = null;

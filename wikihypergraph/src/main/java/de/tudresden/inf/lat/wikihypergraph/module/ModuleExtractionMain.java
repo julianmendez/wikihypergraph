@@ -22,7 +22,6 @@ import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 public class ModuleExtractionMain {
 
 	public static final String WIKIDATAWIKI = "wikidatawiki";
-	public static final String TEMPORARY_FILE = "dependencies.properties";
 
 	final static char NEW_LINE_CHAR = '\n';
 	final static char TAB_CHAR = '\t';
