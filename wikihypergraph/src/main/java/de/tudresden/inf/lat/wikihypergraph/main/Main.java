@@ -116,8 +116,10 @@ public class Main {
 		BufferedReader input = new BufferedReader(reader);
 		Set<String> ret = new TreeSet<String>();
 		for (String line = input.readLine(); line != null; line = input.readLine()) {
-			String item = (new StringTokenizer(line)).nextToken();
-			ret.add(item);
+			if (!line.trim().isEmpty()) {
+				String item = (new StringTokenizer(line)).nextToken();
+				ret.add(item);
+			}
 		}
 		return ret;
 	}
