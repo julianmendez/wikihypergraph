@@ -1,4 +1,4 @@
-# [WikiHyperGraph](http://julianmendez.github.io/wikihypergraph/)
+# [WikiHyperGraph](https://julianmendez.github.io/wikihypergraph/)
 
 [![Build Status](https://travis-ci.org/julianmendez/wikihypergraph.png?branch=master)](https://travis-ci.org/julianmendez/wikihypergraph)
 
@@ -37,7 +37,7 @@ where *NEW_VERSION* is the new version.
 
 ### License
 
-This software is distributed under the [GNU General Public License Version 3](http://www.gnu.org/licenses/gpl-3.0.txt).
+This software is distributed under the [GNU General Public License Version 3](https://www.gnu.org/licenses/gpl-3.0.txt).
 
 
 ### Contact
