@@ -20,7 +20,7 @@
 
     <section class="main-content">
       <h1>
-<a id="wikihypergraph" class="anchor" href="#wikihypergraph" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="http://julianmendez.github.io/wikihypergraph/">WikiHyperGraph</a>
+<a id="wikihypergraph" class="anchor" href="#wikihypergraph" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="https://julianmendez.github.io/wikihypergraph/">WikiHyperGraph</a>
 </h1>
 
 <p><a href="https://travis-ci.org/julianmendez/wikihypergraph"><img src="https://travis-ci.org/julianmendez/wikihypergraph.png?branch=master" alt="Build Status"></a></p>
@@ -37,13 +37,33 @@ $ mvn clean install
 
 <p>To run the project (after compiling it):</p>
 
-<pre><code>$ mvn exec:java
+<pre><code>$ cd wikihypergraph
+$ mvn exec:java
 </code></pre>
+
+<p>(this means, <code>cd</code> twice after cloning)</p>
+
+<p>To compile the project offline, first download the dependencies:</p>
+
+<pre><code>$ mvn dependency:go-offline
+</code></pre>
+
+<p>and once offline, use:</p>
+
+<pre><code>$ mvn --offline clean install
+</code></pre>
+
+<p>The version number is updated with:</p>
+
+<pre><code>$ mvn versions:set -DnewVersion=NEW_VERSION
+</code></pre>
+
+<p>where <em>NEW_VERSION</em> is the new version.</p>
 
 <h3>
 <a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h3>
 
-<p>This software is distributed under the <a href="http://www.gnu.org/licenses/gpl-3.0.txt">GNU General Public License Version 3</a>.</p>
+<p>This software is distributed under the <a href="https://www.gnu.org/licenses/gpl-3.0.txt">GNU General Public License Version 3</a>.</p>
 
 <h3>
 <a id="contact" class="anchor" href="#contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contact</h3>
