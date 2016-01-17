@@ -82,8 +82,6 @@ public class ModuleExtractionMain {
 	 *            set of items
 	 * @param dependencyMap
 	 *            dependency map
-	 * @param output
-	 *            output
 	 * @param manager
 	 *            integer manager
 	 * @return the module
