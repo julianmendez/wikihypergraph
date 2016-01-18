@@ -27,7 +27,9 @@ public class DependencyPropertiesMwRevisionProcessor implements MwRevisionProces
 
 	/**
 	 * Constructs a new processor.
-	 * @param writer writer
+	 * 
+	 * @param writer
+	 *            writer
 	 */
 	public DependencyPropertiesMwRevisionProcessor(Writer writer) {
 		if (writer == null) {

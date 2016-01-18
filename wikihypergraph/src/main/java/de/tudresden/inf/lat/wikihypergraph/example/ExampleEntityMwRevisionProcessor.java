@@ -32,11 +32,9 @@ public class ExampleEntityMwRevisionProcessor implements MwRevisionProcessor {
 	}
 
 	@Override
-	public void startRevisionProcessing(String siteName, String baseUrl,
-			Map<Integer, String> namespaces) {
+	public void startRevisionProcessing(String siteName, String baseUrl, Map<Integer, String> namespaces) {
 		try {
-			this.output.write("" + (new Date()).toString()
-					+ ": start revision processing with site name=" + siteName
+			this.output.write("" + (new Date()).toString() + ": start revision processing with site name=" + siteName
 					+ ", baseUrl=" + baseUrl + " namespaces=" + namespaces);
 			this.output.newLine();
 			this.output.flush();
@@ -48,8 +46,8 @@ public class ExampleEntityMwRevisionProcessor implements MwRevisionProcessor {
 	@Override
 	public void processRevision(MwRevision mwRevision) {
 		try {
-			this.output.write("" + (new Date()).toString() + ": pageId="
-					+ mwRevision.getPageId() + " : " + mwRevision.getTitle());
+			this.output.write("" + (new Date()).toString() + ": pageId=" + mwRevision.getPageId() + " : "
+					+ mwRevision.getTitle());
 			this.output.newLine();
 			this.output.flush();
 		} catch (IOException e) {
@@ -60,8 +58,7 @@ public class ExampleEntityMwRevisionProcessor implements MwRevisionProcessor {
 	@Override
 	public void finishRevisionProcessing() {
 		try {
-			this.output.write("" + (new Date()).toString()
-					+ ": finish revision processing.");
+			this.output.write("" + (new Date()).toString() + ": finish revision processing.");
 			this.output.newLine();
 			this.output.flush();
 		} catch (IOException e) {

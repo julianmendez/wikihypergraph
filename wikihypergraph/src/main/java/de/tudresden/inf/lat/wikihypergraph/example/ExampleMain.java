@@ -31,8 +31,7 @@ public class ExampleMain {
 	 *            writer that gets the result of the processing
 	 */
 	public void processDump(DumpProcessingController controller, Writer output) {
-		MwRevisionProcessor mwRevisionProcessor = new ExampleEntityMwRevisionProcessor(
-				output);
+		MwRevisionProcessor mwRevisionProcessor = new ExampleEntityMwRevisionProcessor(output);
 
 		// this registers the processor
 		controller.registerMwRevisionProcessor(mwRevisionProcessor, null, true);
@@ -49,8 +48,7 @@ public class ExampleMain {
 	 *             if something went wrong with the input/output streams.
 	 */
 	public void run() throws IOException {
-		DumpProcessingController controller = new DumpProcessingController(
-				WIKIDATAWIKI);
+		DumpProcessingController controller = new DumpProcessingController(WIKIDATAWIKI);
 		FileWriter writer = new FileWriter(this.outputFileName);
 
 		processDump(controller, writer);
