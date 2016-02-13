@@ -2,6 +2,7 @@ package de.tudresden.inf.lat.wikihypergraph.selector;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,13 +80,17 @@ public class AxiomSelectorMwRevisionProcessor implements MwRevisionProcessor {
 				try {
 					List<SelectorTuple> tuples = new ArrayList<SelectorTuple>();
 					tuples.addAll(this.visitor.process(mwRevision));
-					for (SelectorTuple tuple : tuples) {
-						this.output.write(tuple.toString());
-						this.output.newLine();
-						this.output.flush();
-					}
+					tuples.forEach(tuple -> {
+						try {
+							this.output.write(tuple.toString());
+							this.output.newLine();
+							this.output.flush();
+						} catch (IOException ex) {
+							throw new UncheckedIOException(ex);
+						}
+					});
 				} catch (IOException ex) {
-					throw new RuntimeException(ex);
+					throw new UncheckedIOException(ex);
 				}
 			}
 		}

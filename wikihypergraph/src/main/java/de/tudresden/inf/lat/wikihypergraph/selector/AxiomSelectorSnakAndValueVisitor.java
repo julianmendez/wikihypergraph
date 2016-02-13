@@ -14,7 +14,6 @@ import org.wikidata.wdtk.datamodel.interfaces.NoValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.SnakVisitor;
 import org.wikidata.wdtk.datamodel.interfaces.SomeValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
@@ -164,13 +163,13 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 		List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
 		List<StatementGroup> statementGroups = getStatementGroups(mwRevision);
-		for (StatementGroup statementGroup : statementGroups) {
+		statementGroups.forEach(statementGroup -> {
 			String subject = mwRevision.getTitle();
 			if (subject == null) {
 				subject = PARSING_PROBLEM_MESSAGE;
 			}
 			ret.addAll(process(statementGroup, subject));
-		}
+		});
 		return ret;
 	}
 
@@ -184,9 +183,9 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 		List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
 		List<Statement> statements = statementGroup.getStatements();
-		for (Statement statement : statements) {
+		statements.forEach(statement-> {
 			ret.addAll(process(statement, subject));
-		}
+		});
 		return ret;
 	}
 
@@ -210,9 +209,9 @@ public class AxiomSelectorSnakAndValueVisitor {
 		}
 		this.statementId++;
 
-		for (Reference reference : statement.getReferences()) {
+		statement.getReferences().forEach(reference -> {
 			addReference(ret, reference, mainStatementId);
-		}
+		});
 		return ret;
 	}
 
@@ -269,9 +268,9 @@ public class AxiomSelectorSnakAndValueVisitor {
 		List<SelectorTuple> pairValues = new ArrayList<SelectorTuple>();
 		pairValues.addAll(snak.accept(entityVisitor));
 
-		for (SelectorTuple currentPairValue : pairValues) {
+		pairValues.forEach(currentPairValue -> {
 			addPairValue(list, currentPairValue);
-		}
+		});
 		this.pairValueId++;
 
 	}
@@ -283,11 +282,11 @@ public class AxiomSelectorSnakAndValueVisitor {
 		addTuple(ret, asStatement(mainStatementId), TypeAndRelationName.RELATION_HAS_REFERENCE,
 				asReference(this.referenceId));
 
-		for (SnakGroup snakGroup : reference.getSnakGroups()) {
-			for (Snak snak : snakGroup.getSnaks()) {
+		reference.getSnakGroups().forEach(snakGroup -> {
+			snakGroup.getSnaks().forEach(snak -> {
 				addPairValuesInSnak(ret, snak);
-			}
-		}
+			});
+		});
 		this.referenceId++;
 
 	}

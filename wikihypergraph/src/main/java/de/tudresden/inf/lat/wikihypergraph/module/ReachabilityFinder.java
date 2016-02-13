@@ -56,12 +56,12 @@ public class ReachabilityFinder {
 
 			Set<Integer> adjacentSet = this.adjacencyMap.get(current);
 			if (adjacentSet != null) {
-				for (Integer adjacent : adjacentSet) {
+				adjacentSet.forEach(adjacent -> {
 					if (!visited.contains(adjacent)) {
 						toVisit.add(adjacent);
 						ret.put(adjacent, current);
 					}
-				}
+				});
 			}
 		}
 		return ret;

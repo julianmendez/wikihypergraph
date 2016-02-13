@@ -93,10 +93,10 @@ public class ModuleExtractionMain {
 		ReachabilityFinder finder = new ReachabilityFinder(dependencyMap);
 		Set<Integer> module = new TreeSet<Integer>();
 		Map<Integer, Integer> reachableVertices = new TreeMap<Integer, Integer>();
-		for (Integer itemIdentifier : setOfItems) {
+		setOfItems.forEach(itemIdentifier -> {
 			reachableVertices.putAll(finder.getReachabilityMap(itemIdentifier));
 			module.add(itemIdentifier);
-		}
+		});
 		module.addAll(reachableVertices.keySet());
 
 		List<String> ret = new ArrayList<String>();

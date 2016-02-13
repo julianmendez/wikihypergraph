@@ -82,22 +82,23 @@ public class MapOnFile implements AdjacencyMap {
 
 	@Override
 	public Set<Integer> get(Integer key) {
-		Set<Integer> ret = null;
-		if (key != null) {
-			ret = new TreeSet<Integer>();
+		if (key == null) {
+			return null;
+		}else {
+			Set<Integer>  ret = new TreeSet<Integer>();
 			IntegerManager manager = new IntegerManager();
 			String keyStr = manager.asString(key);
 			String valueStr = get(keyStr);
 			if (valueStr != null) {
 				List<String> valueListStr = asList(valueStr);
-				for (String current : valueListStr) {
+				valueListStr.forEach(current -> {
 					if (manager.isValid(current)) {
 						ret.add(manager.asNumber(current));
 					}
-				}
+				});
 			}
+			return ret;
 		}
-		return ret;
 	}
 
 	String getKey(String line) {

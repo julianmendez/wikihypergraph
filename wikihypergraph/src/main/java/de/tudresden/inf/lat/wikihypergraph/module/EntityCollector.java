@@ -139,9 +139,9 @@ public class EntityCollector {
 	public Set<String> collectEntities(MwRevision mwRevision) throws JsonProcessingException, IOException {
 		Set<String> ret = new TreeSet<String>();
 		List<StatementGroup> statementGroups = getStatementGroups(mwRevision);
-		for (StatementGroup statementGroup : statementGroups) {
+		statementGroups.forEach(statementGroup -> {
 			ret.addAll(collectEntities(statementGroup));
-		}
+		});
 		return ret;
 	}
 
@@ -155,9 +155,9 @@ public class EntityCollector {
 	public Set<String> collectEntities(StatementGroup statementGroup) {
 		Set<String> ret = new TreeSet<String>();
 		List<Statement> statements = statementGroup.getStatements();
-		for (Statement statement : statements) {
+		statements.forEach(statement -> {
 			ret.addAll(collectEntities(statement));
-		}
+		});
 		return ret;
 	}
 

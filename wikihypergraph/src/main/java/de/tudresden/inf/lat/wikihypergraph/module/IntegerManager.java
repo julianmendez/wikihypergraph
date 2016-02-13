@@ -112,9 +112,9 @@ public class IntegerManager {
 			return null;
 		}
 		Collection<Integer> ret = new ArrayList<Integer>();
-		for (String str : collection) {
+		collection.forEach(str -> {
 			ret.add(asNumber(str));
-		}
+		});
 		return ret;
 	}
 
@@ -132,9 +132,9 @@ public class IntegerManager {
 			return null;
 		}
 		Collection<String> ret = new ArrayList<String>();
-		for (Integer number : collection) {
+		collection.forEach(number -> {
 			ret.add(asString(number));
-		}
+		});
 		return ret;
 	}
 
