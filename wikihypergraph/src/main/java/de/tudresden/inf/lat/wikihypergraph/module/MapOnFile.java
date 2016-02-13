@@ -85,8 +85,8 @@ public class MapOnFile implements AdjacencyMap {
 	public Set<Integer> get(Integer key) {
 		if (key == null) {
 			return null;
-		}else {
-			Set<Integer>  ret = new TreeSet<Integer>();
+		} else {
+			Set<Integer> ret = new TreeSet<Integer>();
 			IntegerManager manager = new IntegerManager();
 			String keyStr = manager.asString(key);
 			String valueStr = get(keyStr);

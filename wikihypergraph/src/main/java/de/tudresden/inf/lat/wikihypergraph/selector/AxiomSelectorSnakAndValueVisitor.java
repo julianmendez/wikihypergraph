@@ -183,7 +183,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 
 		List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
 		List<Statement> statements = statementGroup.getStatements();
-		statements.forEach(statement-> {
+		statements.forEach(statement -> {
 			ret.addAll(process(statement, subject));
 		});
 		return ret;
