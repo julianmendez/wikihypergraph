@@ -2,6 +2,7 @@ package de.tudresden.inf.lat.wikihypergraph.example;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.util.Date;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class ExampleEntityMwRevisionProcessor implements MwRevisionProcessor {
 			this.output.newLine();
 			this.output.flush();
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new UncheckedIOException(e);
 		}
 	}
 
@@ -51,7 +52,7 @@ public class ExampleEntityMwRevisionProcessor implements MwRevisionProcessor {
 			this.output.newLine();
 			this.output.flush();
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new UncheckedIOException(e);
 		}
 	}
 
@@ -62,7 +63,7 @@ public class ExampleEntityMwRevisionProcessor implements MwRevisionProcessor {
 			this.output.newLine();
 			this.output.flush();
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new UncheckedIOException(e);
 		}
 	}
 

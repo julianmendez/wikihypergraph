@@ -105,7 +105,7 @@ public class AxiomSelectorMwRevisionProcessor implements MwRevisionProcessor {
 				this.output.flush();
 			}
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new UncheckedIOException(e);
 		}
 	}
 

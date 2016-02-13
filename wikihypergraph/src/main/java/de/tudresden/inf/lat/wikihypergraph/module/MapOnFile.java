@@ -3,6 +3,7 @@ package de.tudresden.inf.lat.wikihypergraph.module;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +43,7 @@ public class MapOnFile implements AdjacencyMap {
 		try {
 			loadMap(reader);
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new UncheckedIOException(e);
 		}
 	}
 
