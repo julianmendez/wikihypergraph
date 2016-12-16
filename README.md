@@ -42,5 +42,5 @@ This software is distributed under the [GNU General Public License Version 3](ht
 
 ### Contact
 
-In case you need more information, please contact @julianmendez .
+For more information, please contact @julianmendez .
 
