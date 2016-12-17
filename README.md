@@ -43,12 +43,12 @@ $ mvn versions:set -DnewVersion=NEW_VERSION
 where *NEW_VERSION* is the new version.
 
 
-### License
+## License
 
 This software is distributed under the [GNU General Public License Version 3](https://www.gnu.org/licenses/gpl-3.0.txt).
 
 
-### Contact
+## Contact
 
 For more information, please contact @julianmendez .
 
