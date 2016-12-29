@@ -115,12 +115,12 @@ public class Main {
 	Set<String> readEntities(Reader reader) throws IOException {
 		BufferedReader input = new BufferedReader(reader);
 		Set<String> ret = new TreeSet<String>();
-		for (String line = input.readLine(); line != null; line = input.readLine()) {
-			if (!line.trim().isEmpty()) {
-				String item = (new StringTokenizer(line)).nextToken();
-				ret.add(item);
-			}
-		}
+		input.lines() //
+				.filter(line -> !line.trim().isEmpty()) //
+				.forEach(line -> {
+					String item = (new StringTokenizer(line)).nextToken();
+					ret.add(item);
+				});
 		return ret;
 	}
 

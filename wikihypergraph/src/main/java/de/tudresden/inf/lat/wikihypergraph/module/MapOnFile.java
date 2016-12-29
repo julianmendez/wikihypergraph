@@ -53,15 +53,15 @@ public class MapOnFile implements AdjacencyMap {
 
 	void loadMap(Reader reader) throws IOException {
 		BufferedReader input = new BufferedReader(reader);
-		for (String line = input.readLine(); line != null; line = input.readLine()) {
-			if (!line.trim().isEmpty() && !line.startsWith(COMMENT_CHAR)) {
-				String key = getKey(line);
-				String value = getValue(line);
-				if (isValidValue(value)) {
-					this.map.put(key, value);
-				}
-			}
-		}
+		input.lines() //
+				.filter(line -> (!line.trim().isEmpty() && !line.startsWith(COMMENT_CHAR))) //
+				.forEach(line -> {
+					String key = getKey(line);
+					String value = getValue(line);
+					if (isValidValue(value)) {
+						this.map.put(key, value);
+					}
+				});
 		input.close();
 	}
 
