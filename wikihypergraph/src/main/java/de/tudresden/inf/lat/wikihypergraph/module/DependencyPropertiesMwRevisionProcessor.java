@@ -73,7 +73,7 @@ public class DependencyPropertiesMwRevisionProcessor implements MwRevisionProces
 	public void processRevision(MwRevision mwRevision) {
 		String title = mwRevision.getTitle();
 		if ((new IntegerManager()).isValid(title)) {
-			Set<String> entities = new TreeSet<String>();
+			Set<String> entities = new TreeSet<>();
 
 			try {
 				entities.addAll((new EntityCollector()).collectEntities(mwRevision));

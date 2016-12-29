@@ -45,9 +45,9 @@ public class ReachabilityFinder {
 	 * @return a map of vertices reachable from the given vertex
 	 */
 	public Map<Integer, Integer> getReachabilityMap(Integer origin) {
-		Map<Integer, Integer> ret = new TreeMap<Integer, Integer>();
-		Set<Integer> visited = new TreeSet<Integer>();
-		Set<Integer> toVisit = new TreeSet<Integer>();
+		Map<Integer, Integer> ret = new TreeMap<>();
+		Set<Integer> visited = new TreeSet<>();
+		Set<Integer> toVisit = new TreeSet<>();
 		toVisit.add(origin);
 		while (!toVisit.isEmpty()) {
 			Integer current = toVisit.iterator().next();

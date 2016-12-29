@@ -54,7 +54,7 @@ public class EntityCollector {
 		@Override
 		public Set<String> visit(ValueSnak snak) {
 			ValueSnakVisitor valueVisitor = new ValueSnakVisitor();
-			Set<String> ret = new TreeSet<String>();
+			Set<String> ret = new TreeSet<>();
 			ret.addAll(snak.getValue().accept(valueVisitor));
 			ret.add(snak.getPropertyId().getId());
 			return ret;
@@ -137,7 +137,7 @@ public class EntityCollector {
 	 *             if something goes wrong with I/O
 	 */
 	public Set<String> collectEntities(MwRevision mwRevision) throws JsonProcessingException, IOException {
-		Set<String> ret = new TreeSet<String>();
+		Set<String> ret = new TreeSet<>();
 		List<StatementGroup> statementGroups = getStatementGroups(mwRevision);
 		statementGroups.forEach(statementGroup -> {
 			ret.addAll(collectEntities(statementGroup));
@@ -153,7 +153,7 @@ public class EntityCollector {
 	 * @return set of all entities contained in the given statement group
 	 */
 	public Set<String> collectEntities(StatementGroup statementGroup) {
-		Set<String> ret = new TreeSet<String>();
+		Set<String> ret = new TreeSet<>();
 		List<Statement> statements = statementGroup.getStatements();
 		statements.forEach(statement -> {
 			ret.addAll(collectEntities(statement));
@@ -169,7 +169,7 @@ public class EntityCollector {
 	 * @return set of all entities contained in the given statement
 	 */
 	public Set<String> collectEntities(Statement statement) {
-		Set<String> ret = new TreeSet<String>();
+		Set<String> ret = new TreeSet<>();
 		Snak snak = statement.getClaim().getMainSnak();
 		ret.add(snak.getPropertyId().getId());
 		EntitySnakVisitor entityVisitor = new EntitySnakVisitor();
@@ -190,7 +190,7 @@ public class EntityCollector {
 	 * 
 	 */
 	List<StatementGroup> getStatementGroups(MwRevision mwRevision) throws JsonProcessingException, IOException {
-		List<StatementGroup> ret = new ArrayList<StatementGroup>();
+		List<StatementGroup> ret = new ArrayList<>();
 		String format = mwRevision.getFormat();
 		String model = mwRevision.getModel();
 

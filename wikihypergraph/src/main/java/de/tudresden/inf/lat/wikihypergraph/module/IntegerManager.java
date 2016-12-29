@@ -111,7 +111,7 @@ public class IntegerManager {
 		if (collection == null) {
 			return null;
 		}
-		Collection<Integer> ret = new ArrayList<Integer>();
+		Collection<Integer> ret = new ArrayList<>();
 		collection.forEach(str -> {
 			ret.add(asNumber(str));
 		});
@@ -131,7 +131,7 @@ public class IntegerManager {
 		if (collection == null) {
 			return null;
 		}
-		Collection<String> ret = new ArrayList<String>();
+		Collection<String> ret = new ArrayList<>();
 		collection.forEach(number -> {
 			ret.add(asString(number));
 		});

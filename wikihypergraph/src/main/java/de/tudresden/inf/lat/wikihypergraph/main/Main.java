@@ -114,7 +114,7 @@ public class Main {
 	 */
 	Set<String> readEntities(Reader reader) throws IOException {
 		BufferedReader input = new BufferedReader(reader);
-		Set<String> ret = new TreeSet<String>();
+		Set<String> ret = new TreeSet<>();
 		input.lines() //
 				.filter(line -> !line.trim().isEmpty()) //
 				.forEach(line -> {
@@ -162,7 +162,7 @@ public class Main {
 			ModuleExtractionMain moduleExtractor = new ModuleExtractionMain(TEMPORARY_DEPENDENCY_FILE_NAME);
 			Collection<String> module = moduleExtractor.extractModule(setOfEntities);
 			writeEntities(module, new FileWriter(TEMPORARY_MODULE_FILE_NAME));
-			Set<String> moduleAsSet = new HashSet<String>();
+			Set<String> moduleAsSet = new HashSet<>();
 			moduleAsSet.addAll(module);
 			axiomSelector.selectAxioms(moduleAsSet, writer);
 		}

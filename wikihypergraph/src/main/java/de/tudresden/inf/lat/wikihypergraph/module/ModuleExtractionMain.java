@@ -91,15 +91,15 @@ public class ModuleExtractionMain {
 	Collection<String> getModule(Set<Integer> setOfItems, AdjacencyMap dependencyMap, IntegerManager manager)
 			throws IOException {
 		ReachabilityFinder finder = new ReachabilityFinder(dependencyMap);
-		Set<Integer> module = new TreeSet<Integer>();
-		Map<Integer, Integer> reachableVertices = new TreeMap<Integer, Integer>();
+		Set<Integer> module = new TreeSet<>();
+		Map<Integer, Integer> reachableVertices = new TreeMap<>();
 		setOfItems.forEach(itemIdentifier -> {
 			reachableVertices.putAll(finder.getReachabilityMap(itemIdentifier));
 			module.add(itemIdentifier);
 		});
 		module.addAll(reachableVertices.keySet());
 
-		List<String> ret = new ArrayList<String>();
+		List<String> ret = new ArrayList<>();
 		ret.addAll(manager.asString(module));
 		return ret;
 	}
@@ -120,7 +120,7 @@ public class ModuleExtractionMain {
 		}
 
 		IntegerManager manager = new IntegerManager();
-		Set<Integer> setOfEntityIdentifiers = new TreeSet<Integer>();
+		Set<Integer> setOfEntityIdentifiers = new TreeSet<>();
 		setOfEntityIdentifiers.addAll(manager.asNumber(setOfEntities));
 		MapOnFile dependencyMap = new MapOnFile(new FileReader(propertiesFile));
 		Collection<String> ret = getModule(setOfEntityIdentifiers, dependencyMap, manager);

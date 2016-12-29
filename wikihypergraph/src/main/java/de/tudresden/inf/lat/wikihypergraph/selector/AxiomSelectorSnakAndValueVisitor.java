@@ -70,7 +70,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 		@Override
 		public List<SelectorTuple> visit(ValueSnak snak) {
 			ValueSnakVisitor valueVisitor = new ValueSnakVisitor();
-			List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
+			List<SelectorTuple> ret = new ArrayList<>();
 			String relation = snak.getPropertyId().getId();
 			SelectorTuple tuple = new SelectorTuple(STATEMENT_PREFIX + this.statement, this.subject, relation,
 					snak.getValue().accept(valueVisitor));
@@ -161,7 +161,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 			throw new IllegalArgumentException("Null argument.");
 		}
 
-		List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
+		List<SelectorTuple> ret = new ArrayList<>();
 		List<StatementGroup> statementGroups = getStatementGroups(mwRevision);
 		statementGroups.forEach(statementGroup -> {
 			String subject = mwRevision.getTitle();
@@ -181,7 +181,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 			throw new IllegalArgumentException("Null argument.");
 		}
 
-		List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
+		List<SelectorTuple> ret = new ArrayList<>();
 		List<Statement> statements = statementGroup.getStatements();
 		statements.forEach(statement -> {
 			ret.addAll(process(statement, subject));
@@ -197,7 +197,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 			throw new IllegalArgumentException("Null argument.");
 		}
 
-		List<SelectorTuple> ret = new ArrayList<SelectorTuple>();
+		List<SelectorTuple> ret = new ArrayList<>();
 		addTuple(ret, asStatement(this.statementId + 1), TypeAndRelationName.RELATION_HAS_TYPE,
 				TypeAndRelationName.TYPE_STATEMENT);
 
@@ -265,7 +265,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 	 */
 	void addPairValuesInSnak(List<SelectorTuple> list, Snak snak) {
 		EntitySnakVisitor entityVisitor = new EntitySnakVisitor(this.statementId, asPairValue(this.pairValueId));
-		List<SelectorTuple> pairValues = new ArrayList<SelectorTuple>();
+		List<SelectorTuple> pairValues = new ArrayList<>();
 		pairValues.addAll(snak.accept(entityVisitor));
 
 		pairValues.forEach(currentPairValue -> {
@@ -292,7 +292,7 @@ public class AxiomSelectorSnakAndValueVisitor {
 	}
 
 	List<StatementGroup> getStatementGroups(MwRevision mwRevision) throws JsonProcessingException, IOException {
-		List<StatementGroup> ret = new ArrayList<StatementGroup>();
+		List<StatementGroup> ret = new ArrayList<>();
 		String format = mwRevision.getFormat();
 		String model = mwRevision.getModel();
 

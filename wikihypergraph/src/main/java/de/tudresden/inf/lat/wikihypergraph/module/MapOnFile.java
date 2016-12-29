@@ -27,7 +27,7 @@ public class MapOnFile implements AdjacencyMap {
 	public static final String COMMENT_CHAR = "#";
 	public static final String PARSING_PROBLEM_MESSAGE = DependencyPropertiesMwRevisionProcessor.PARSING_PROBLEM_MESSAGE;
 
-	private Map<String, String> map = new HashMap<String, String>();
+	private Map<String, String> map = new HashMap<>();
 
 	/**
 	 * Constructs a new map.
@@ -86,7 +86,7 @@ public class MapOnFile implements AdjacencyMap {
 		if (key == null) {
 			return null;
 		} else {
-			Set<Integer> ret = new TreeSet<Integer>();
+			Set<Integer> ret = new TreeSet<>();
 			IntegerManager manager = new IntegerManager();
 			String keyStr = manager.asString(key);
 			String valueStr = get(keyStr);
@@ -123,7 +123,7 @@ public class MapOnFile implements AdjacencyMap {
 	List<String> asList(String line) {
 		List<String> ret = null;
 		if (line != null) {
-			ret = new ArrayList<String>();
+			ret = new ArrayList<>();
 			StringTokenizer stok = new StringTokenizer(line);
 			while (stok.hasMoreTokens()) {
 				ret.add(stok.nextToken());

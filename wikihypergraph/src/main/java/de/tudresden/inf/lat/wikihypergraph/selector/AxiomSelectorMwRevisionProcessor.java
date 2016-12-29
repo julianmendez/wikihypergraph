@@ -78,7 +78,7 @@ public class AxiomSelectorMwRevisionProcessor implements MwRevisionProcessor {
 		if ((new IntegerManager()).isValid(title)) {
 			if (this.traverseAllEntities || this.entities.contains(title)) {
 				try {
-					List<SelectorTuple> tuples = new ArrayList<SelectorTuple>();
+					List<SelectorTuple> tuples = new ArrayList<>();
 					tuples.addAll(this.visitor.process(mwRevision));
 					tuples.forEach(tuple -> {
 						try {
