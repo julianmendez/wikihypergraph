@@ -8,10 +8,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+
+import de.tudresden.inf.lat.util.map.OptMap;
+import de.tudresden.inf.lat.util.map.OptMapImpl;
 
 /**
  * An object of this class models an unmodifiable map that reads its entries
@@ -27,7 +31,7 @@ public class MapOnFile implements AdjacencyMap {
 	public static final String COMMENT_CHAR = "#";
 	public static final String PARSING_PROBLEM_MESSAGE = DependencyPropertiesMwRevisionProcessor.PARSING_PROBLEM_MESSAGE;
 
-	private Map<String, String> map = new HashMap<>();
+	private OptMap<String, String> map = new OptMapImpl<>(new HashMap<>());
 
 	/**
 	 * Constructs a new map.
@@ -72,8 +76,8 @@ public class MapOnFile implements AdjacencyMap {
 	 *            key
 	 * @return the value for the given key
 	 */
-	public String get(String key) {
-		String ret = null;
+	public Optional<String> get(String key) {
+		Optional<String> ret = Optional.empty();
 		if (key != null) {
 			String cleanKey = key.trim();
 			ret = this.map.get(cleanKey);
@@ -89,9 +93,9 @@ public class MapOnFile implements AdjacencyMap {
 			Set<Integer> ret = new TreeSet<>();
 			IntegerManager manager = new IntegerManager();
 			String keyStr = manager.asString(key);
-			String valueStr = get(keyStr);
-			if (valueStr != null) {
-				List<String> valueListStr = asList(valueStr);
+			Optional<String> optValueStr = get(keyStr);
+			if (optValueStr.isPresent()) {
+				List<String> valueListStr = asList(optValueStr.get());
 				valueListStr.forEach(current -> {
 					if (manager.isValid(current)) {
 						ret.add(manager.asNumber(current));
@@ -133,7 +137,7 @@ public class MapOnFile implements AdjacencyMap {
 	}
 
 	public Map<String, String> getMap() {
-		return this.map;
+		return this.map.asMap();
 	}
 
 	@Override

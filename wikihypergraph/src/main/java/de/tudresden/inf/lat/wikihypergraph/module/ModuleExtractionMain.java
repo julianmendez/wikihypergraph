@@ -8,12 +8,14 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
+
+import de.tudresden.inf.lat.util.map.OptMap;
+import de.tudresden.inf.lat.util.map.OptMapImpl;
 
 /**
  * An object of this class extracts a so-called module, which is set of
@@ -92,7 +94,7 @@ public class ModuleExtractionMain {
 			throws IOException {
 		ReachabilityFinder finder = new ReachabilityFinder(dependencyMap);
 		Set<Integer> module = new TreeSet<>();
-		Map<Integer, Integer> reachableVertices = new TreeMap<>();
+		OptMap<Integer, Integer> reachableVertices = new OptMapImpl<>(new TreeMap<>());
 		setOfItems.forEach(itemIdentifier -> {
 			reachableVertices.putAll(finder.getReachabilityMap(itemIdentifier));
 			module.add(itemIdentifier);

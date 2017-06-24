@@ -13,16 +13,18 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
+			<groupId>de.tu-dresden.inf.lat.util</groupId>
+			<artifactId>util-map</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>org.wikidata.wdtk</groupId>
 			<artifactId>wdtk-dumpfiles</artifactId>
-			<version>0.6.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
 		</dependency>
 
 	</dependencies>
@@ -34,9 +36,37 @@
 		<relativePath></relativePath>
 	</parent>
 
+	<dependencyManagement>
+		<dependencies>
+
+			<dependency>
+				<groupId>de.tu-dresden.inf.lat.util</groupId>
+				<artifactId>util-map</artifactId>
+				<version>${util.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.wikidata.wdtk</groupId>
+				<artifactId>wdtk-dumpfiles</artifactId>
+				<version>${wdtk.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.12</version>
+				<scope>test</scope>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+
+		<util.version>0.1.0</util.version>
+		<wdtk.version>0.7.0</wdtk.version>
 
 		<mainClass>de.tudresden.inf.lat.wikihypergraph.main.Main</mainClass>
 

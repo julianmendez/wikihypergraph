@@ -5,6 +5,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import de.tudresden.inf.lat.util.map.OptMap;
+import de.tudresden.inf.lat.util.map.OptMapImpl;
+
 /**
  * An object of this class represents a directed graph that can compute the set
  * of vertices reachable from a given vertex.
@@ -45,7 +48,7 @@ public class ReachabilityFinder {
 	 * @return a map of vertices reachable from the given vertex
 	 */
 	public Map<Integer, Integer> getReachabilityMap(Integer origin) {
-		Map<Integer, Integer> ret = new TreeMap<>();
+		OptMap<Integer, Integer> ret = new OptMapImpl<>(new TreeMap<>());
 		Set<Integer> visited = new TreeSet<>();
 		Set<Integer> toVisit = new TreeSet<>();
 		toVisit.add(origin);
@@ -64,7 +67,7 @@ public class ReachabilityFinder {
 				});
 			}
 		}
-		return ret;
+		return ret.asMap();
 	}
 
 	/**
