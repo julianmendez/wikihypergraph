@@ -1,7 +1,8 @@
 # [WikiHyperGraph](https://julianmendez.github.io/wikihypergraph/)
 
-[![Build Status](https://travis-ci.org/julianmendez/wikihypergraph.png?branch=master)](https://travis-ci.org/julianmendez/wikihypergraph)
-[![Project Stats](https://www.openhub.net/p/wikihypergraph/widgets/project_thin_badge.gif)](https://www.openhub.net/p/wikihypergraph)
+[![build](https://travis-ci.org/julianmendez/wikihypergraph.png?branch=master)](https://travis-ci.org/julianmendez/wikihypergraph)
+[![license](https://img.shields.io/badge/license-LGPL%203.0-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0.txt)
+[![Open Hub](https://www.openhub.net/p/wikihypergraph/widgets/project_thin_badge.gif)](https://www.openhub.net/p/wikihypergraph)
 
 
 ## Source code
