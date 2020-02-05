@@ -8,7 +8,15 @@ language: java
 
 jdk:
   - openjdk11
+  - openjdk12
+  - openjdk13
+  - openjdk14
+  - openjdk15
   - oraclejdk11
+  - oraclejdk12
+  - oraclejdk13
+  - oraclejdk14
+  - oraclejdk15
 
 install:
   - mvn install -DskipTests=true -Dmaven.javadoc.skip=false -B -V
