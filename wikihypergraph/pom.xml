@@ -22,11 +22,6 @@
 			<artifactId>wdtk-dumpfiles</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-		</dependency>
-
 	</dependencies>
 
 	<parent>
@@ -49,13 +44,6 @@
 				<groupId>org.wikidata.wdtk</groupId>
 				<artifactId>wdtk-dumpfiles</artifactId>
 				<version>${wdtk.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.12</version>
-				<scope>test</scope>
 			</dependency>
 
 		</dependencies>
