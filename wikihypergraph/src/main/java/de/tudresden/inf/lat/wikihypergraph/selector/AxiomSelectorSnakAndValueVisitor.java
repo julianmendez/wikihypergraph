@@ -5,25 +5,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectReader;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
-import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-import org.wikidata.wdtk.datamodel.interfaces.NoValueSnak;
-import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
-import org.wikidata.wdtk.datamodel.interfaces.Reference;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.SnakVisitor;
-import org.wikidata.wdtk.datamodel.interfaces.SomeValueSnak;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
-import org.wikidata.wdtk.datamodel.interfaces.StringValue;
-import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
-import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
-import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
-import org.wikidata.wdtk.datamodel.json.jackson.JacksonDatatypeId;
-import org.wikidata.wdtk.datamodel.json.jackson.JacksonTermedStatementDocument;
+import org.wikidata.wdtk.datamodel.helpers.DatamodelMapper;
+import org.wikidata.wdtk.datamodel.implementation.EntityDocumentImpl;
+import org.wikidata.wdtk.datamodel.interfaces.*;
+//import org.wikidata.wdtk.datamodel.json.jackson.JacksonDatatypeId;
+//import org.wikidata.wdtk.datamodel.json.jackson.JacksonTermedStatementDocument;
 import org.wikidata.wdtk.dumpfiles.MwRevision;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -97,11 +86,6 @@ public class AxiomSelectorSnakAndValueVisitor {
 	 *
 	 */
 	class ValueSnakVisitor implements ValueVisitor<String> {
-
-		@Override
-		public String visit(DatatypeIdValue value) {
-			return value.toString();
-		}
 
 		@Override
 		public String visit(EntityIdValue value) {
@@ -297,14 +281,16 @@ public class AxiomSelectorSnakAndValueVisitor {
 		String model = mwRevision.getModel();
 
 		if (format.equals(EXPECTED_FORMAT)
-				&& (model.equals(JacksonDatatypeId.JSON_DT_ITEM) || model.equals(JacksonDatatypeId.JSON_DT_PROPERTY))) {
+				&& (model.equals(DatatypeIdValue.DT_ITEM) || model.equals(DatatypeIdValue.DT_PROPERTY))) {
 
-			ObjectMapper mapper = new ObjectMapper();
 			String text = mwRevision.getText();
 			try {
-				JacksonTermedStatementDocument document = mapper.readValue(text, JacksonTermedStatementDocument.class);
-				document.setSiteIri(Datamodel.SITE_WIKIDATA);
-				ret.addAll(document.getStatementGroups());
+				ObjectMapper mapper = new DatamodelMapper(Datamodel.SITE_WIKIDATA);
+				ObjectReader documentReader = mapper.readerFor(StatementGroup.class);
+				MappingIterator<StatementGroup> documentIterator =
+						documentReader.readValue(text);
+				StatementGroup document = documentIterator.nextValue();
+				ret.add(document);
 			} catch (JsonMappingException e) {
 				// if the page cannot be parsed, it is ignored
 			}
