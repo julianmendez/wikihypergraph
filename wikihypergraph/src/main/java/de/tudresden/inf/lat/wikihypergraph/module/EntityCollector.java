@@ -99,6 +99,11 @@ public class EntityCollector {
 			return Collections.emptySet();
 		}
 
+		@Override
+		public Set<String> visit(UnsupportedValue unsupportedValue) {
+			return Collections.emptySet();
+		}
+
 	}
 
 	/**
