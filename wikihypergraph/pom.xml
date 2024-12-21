@@ -54,7 +54,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 
 		<util.version>0.1.0</util.version>
-		<wdtk.version>0.8.0</wdtk.version>
+		<wdtk.version>0.9.0</wdtk.version>
 
 		<mainClass>de.tudresden.inf.lat.wikihypergraph.main.Main</mainClass>
 
