@@ -117,6 +117,11 @@ public class AxiomSelectorSnakAndValueVisitor {
 			return QUOTES_CHAR + value.toString() + QUOTES_CHAR;
 		}
 
+		@Override
+		public String visit(UnsupportedValue unsupportedValue) {
+			return "";
+		}
+
 	}
 
 	private long statementId = 0;
