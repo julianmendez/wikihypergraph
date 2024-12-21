@@ -182,8 +182,8 @@ public class EntityCollector {
 
 			String text = mwRevision.getText();
 			ObjectMapper mapper = new DatamodelMapper(Datamodel.SITE_WIKIDATA);
-            ObjectReader documentReader = mapper.readerFor(StatementGroup.class);
-            MappingIterator<StatementGroup> documentIterator =
+			ObjectReader documentReader = mapper.readerFor(StatementGroup.class);
+			MappingIterator<StatementGroup> documentIterator =
 					documentReader.readValue(text);
 			StatementGroup document = documentIterator.nextValue();
 			ret.add(document);
